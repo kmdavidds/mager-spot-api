@@ -96,8 +96,17 @@ func (r *Rest) ContactBarang(ctx *gin.Context) {
 		return
 	}
 
+	asker, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed get login user",
+		})
+		return
+	}
+
 	param := model.BarangContact{
 		ID: parsedId,
+		AskerID: asker.(entity.User).ID,
 	}
 
 	contactLink, err := r.usecase.BarangUsecase.ContactBarang(param)

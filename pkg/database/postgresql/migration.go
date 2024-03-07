@@ -15,6 +15,7 @@ func Migrate(db *gorm.DB) {
 		&entity.Makanan{},
 		&entity.Ojek{},
 		&entity.Comment{},
+		&entity.History{},
 	)
 
 	if err != nil {

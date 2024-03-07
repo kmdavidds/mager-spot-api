@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -33,7 +34,7 @@ func (br *BarangRepository) CreateBarang(barang entity.Barang) (entity.Barang, e
 }
 
 func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.BarangWithAuthor, []entity.Comment, error) {
-	
+
 	barang := entity.Barang{}
 	err := br.db.Where(&param).First(&barang).Error
 	if err != nil {
@@ -47,8 +48,8 @@ func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.BarangWit
 	}
 
 	barangWithAuthor := entity.BarangWithAuthor{
-		Barang: barang,
-		Username: user.Username,
+		Barang:    barang,
+		Username:  user.Username,
 		PhotoLink: user.ProfilePhotoLink,
 	}
 
@@ -77,8 +78,8 @@ func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
 			return nil, err
 		}
 		barangsWithAuthor = append(barangsWithAuthor, entity.BarangWithAuthor{
-			Barang: barang,
-			Username: user.Username,
+			Barang:    barang,
+			Username:  user.Username,
 			PhotoLink: user.ProfilePhotoLink,
 		})
 	}
@@ -95,6 +96,17 @@ func (br *BarangRepository) ContactBarang(param model.BarangContact) (entity.Bar
 
 	user := entity.User{}
 	err = br.db.Where("id = ?", barang.UserID).First(&user).Error
+	if err != nil {
+		return entity.Barang{}, entity.User{}, err
+	}
+
+	history := entity.History{
+		ID: uuid.New(),
+		PostID: barang.ID,
+		UserID: param.AskerID,
+	}
+
+	err = br.db.Create(&history).Error
 	if err != nil {
 		return entity.Barang{}, entity.User{}, err
 	}

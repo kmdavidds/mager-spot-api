@@ -26,5 +26,6 @@ type BarangParam struct {
 type BarangContact struct {
 	ID          uuid.UUID `json:"-"`
 	UserID      uuid.UUID `json:"-"`
+	AskerID     uuid.UUID `json:"-"`
 	ContactLink string    `json:"contactLink"`
 }
