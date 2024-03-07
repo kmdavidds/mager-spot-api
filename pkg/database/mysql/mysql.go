@@ -12,6 +12,7 @@ import (
 func ConnectDatabase() *gorm.DB {
 	db, err := gorm.Open(mysql.Open(config.MySQLConstructDSN()), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
+		TranslateError: true,
 	})
 
 	if err != nil {

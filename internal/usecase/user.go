@@ -38,9 +38,12 @@ func (uu *UserUsecase) Register(param model.UserRegister) error {
 	param.ID = uuid.New()
 	param.Password = hashedPassword
 
+	// if email ends with @student.ub.ac.id
+
 	user := entity.User{
 		ID:       param.ID,
 		Username: param.Username,
+		Email:    param.Email,
 		Password: param.Password,
 	}
 
