@@ -10,6 +10,7 @@ type IUserRepository interface {
 	CreateUser(user entity.User) (entity.User, error)
 	GetUser(param model.UserParam) (entity.User, error)
 	UpdateUser(param model.UserUpdates, user entity.User) error
+	UpdatePhoto(param model.PhotoUpdate) error
 }
 
 type UserRepository struct {
@@ -47,5 +48,13 @@ func (ur *UserRepository) UpdateUser(param model.UserUpdates, user entity.User) 
 		return err
 	}
 
+	return nil
+}
+
+func (ur *UserRepository) UpdatePhoto(param model.PhotoUpdate) error {
+	err := ur.db.Model(&entity.User{}).Where("id = ?", param.UserID).Update("profile_photo_link", param.PhotoLink).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }

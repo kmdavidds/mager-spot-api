@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -17,13 +18,14 @@ type IUserUsecase interface {
 	Login(param model.UserLogin) (model.UserLoginResponse, error)
 	GetUser(param model.UserParam) (entity.User, error)
 	UpdateUser(param model.UserUpdates, user entity.User) error
+	UpdatePhoto(param model.PhotoUpdate) error
 }
 
 type UserUsecase struct {
-	ur       repository.IUserRepository
-	bcrypt   bcrypt.Interface
-	jwtAuth  jwt_auth.Interface
-	supabase supabase.Interface
+	ur      repository.IUserRepository
+	bcrypt  bcrypt.Interface
+	jwtAuth jwt_auth.Interface
+	sb      supabase.Interface
 }
 
 func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
@@ -31,7 +33,7 @@ func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Int
 		ur:      userRepository,
 		bcrypt:  bcrypt,
 		jwtAuth: jwtAuth,
-		supabase: supabase,
+		sb:      supabase,
 	}
 }
 
@@ -50,11 +52,11 @@ func (uu *UserUsecase) Register(param model.UserRegister) error {
 		Email:    param.Email,
 		Password: param.Password,
 	}
-	
-	if (strings.Split(param.Email, "@")[1] == "student.ub.ac.id") {
+
+	if strings.Split(param.Email, "@")[1] == "student.ub.ac.id" {
 		user.IsSeller = true
 	}
-	
+
 	_, err = uu.ur.CreateUser(user)
 	if err != nil {
 		return err
@@ -94,6 +96,31 @@ func (uu *UserUsecase) GetUser(param model.UserParam) (entity.User, error) {
 
 func (uu *UserUsecase) UpdateUser(param model.UserUpdates, user entity.User) error {
 	err := uu.ur.UpdateUser(param, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uu *UserUsecase) UpdatePhoto(param model.PhotoUpdate) error {
+	param.Image.Filename = fmt.Sprintf("%s.%s", param.UserID.String(), strings.Split(param.Image.Filename, ".")[1])
+
+	if param.PhotoLink != "" {
+		err := uu.sb.Delete(param.PhotoLink)
+		if err != nil {
+			return err
+		}
+	}
+
+	imageLink, err := uu.sb.Upload(param.Image)
+	if err != nil {
+		return err
+	}
+
+	param.PhotoLink = imageLink
+
+	err = uu.ur.UpdatePhoto(param)
 	if err != nil {
 		return err
 	}
