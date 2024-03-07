@@ -12,7 +12,7 @@ import (
 )
 
 type IBarangUsecase interface {
-	GetBarang(param model.BarangParam) (entity.Barang, error)
+	GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error)
 	CreateBarang(param model.BarangCreate) error
 	GetAllBarang() ([]entity.BarangWithAuthor, error)
 }
@@ -29,7 +29,7 @@ func NewBarangUsecase(barangRepository repository.IBarangRepository, supabase su
 	}
 }
 
-func (bu *BarangUsecase) GetBarang(param model.BarangParam) (entity.Barang, error) {
+func (bu *BarangUsecase) GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error) {
 	return bu.br.GetBarang(param)
 }
 

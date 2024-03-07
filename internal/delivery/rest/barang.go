@@ -70,7 +70,7 @@ func (r *Rest) FetchBarang(ctx *gin.Context) {
 		return
 	}
 
-	barang, err := r.usecase.BarangUsecase.GetBarang(model.BarangParam{ID: parsedId})
+	barang, comments, err := r.usecase.BarangUsecase.GetBarang(model.BarangParam{ID: parsedId})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to get barang",
@@ -81,5 +81,6 @@ func (r *Rest) FetchBarang(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"barang": barang,
+		"comments": comments,
 	})
 }

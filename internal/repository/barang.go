@@ -8,7 +8,7 @@ import (
 
 type IBarangRepository interface {
 	CreateBarang(barang entity.Barang) (entity.Barang, error)
-	GetBarang(param model.BarangParam) (entity.Barang, error)
+	GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error)
 	GetAllBarang() ([]entity.BarangWithAuthor, error)
 }
 
@@ -31,14 +31,20 @@ func (br *BarangRepository) CreateBarang(barang entity.Barang) (entity.Barang, e
 	return barang, nil
 }
 
-func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.Barang, error) {
+func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error) {
 	barang := entity.Barang{}
 	err := br.db.Where(&param).First(&barang).Error
 	if err != nil {
-		return barang, err
+		return barang, nil, err
 	}
 
-	return barang, nil
+	comments := []entity.Comment{}
+	err = br.db.Where("post_id = ?", barang.ID).Find(&comments).Error
+	if err != nil {
+		return barang, nil, err
+	}
+
+	return barang, comments, nil
 }
 
 func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
