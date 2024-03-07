@@ -11,6 +11,7 @@ type IUserRepository interface {
 	GetUser(param model.UserParam) (entity.User, error)
 	UpdateUser(param model.UserUpdates, user entity.User) error
 	UpdatePhoto(param model.PhotoUpdate) error
+	ShowHistory(user entity.User) ([]entity.History, error)
 }
 
 type UserRepository struct {
@@ -57,4 +58,14 @@ func (ur *UserRepository) UpdatePhoto(param model.PhotoUpdate) error {
 		return err
 	}
 	return nil
+}
+
+func (ur *UserRepository) ShowHistory(user entity.User) ([]entity.History, error) {
+	histories := []entity.History{}
+	err := ur.db.Where("user_id = ?", user.ID).Find(&histories).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return histories, nil
 }

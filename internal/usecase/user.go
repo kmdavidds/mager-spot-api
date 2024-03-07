@@ -19,6 +19,7 @@ type IUserUsecase interface {
 	GetUser(param model.UserParam) (entity.User, error)
 	UpdateUser(param model.UserUpdates, user entity.User) error
 	UpdatePhoto(param model.PhotoUpdate) error
+	ShowHistory(user entity.User) ([]entity.History, error)
 }
 
 type UserUsecase struct {
@@ -126,4 +127,8 @@ func (uu *UserUsecase) UpdatePhoto(param model.PhotoUpdate) error {
 	}
 
 	return nil
+}
+
+func (uu *UserUsecase) ShowHistory(user entity.User) ([]entity.History, error) {
+	return uu.ur.ShowHistory(user)
 }

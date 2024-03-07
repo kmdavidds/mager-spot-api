@@ -122,3 +122,26 @@ func (r *Rest) UpdatePhoto(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{})
 }
+
+func (r *Rest) ShowHistory(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get login user",
+		})
+		return
+	}
+
+	historyAll, err := r.usecase.UserUsecase.ShowHistory(user.(entity.User))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to fetch histories",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"histories": historyAll,
+	})
+}

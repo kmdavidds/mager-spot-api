@@ -94,16 +94,20 @@ func (br *BarangRepository) ContactBarang(param model.BarangContact) (entity.Bar
 		return entity.Barang{}, entity.User{}, err
 	}
 
-	user := entity.User{}
-	err = br.db.Where("id = ?", barang.UserID).First(&user).Error
+	seller := entity.User{}
+	err = br.db.Where("id = ?", barang.UserID).First(&seller).Error
 	if err != nil {
 		return entity.Barang{}, entity.User{}, err
 	}
 
 	history := entity.History{
-		ID: uuid.New(),
-		PostID: barang.ID,
-		UserID: param.AskerID,
+		ID:             uuid.New(),
+		PostID:         barang.ID,
+		TypeOfPost:     "barang",
+		UserID:         param.AskerID,
+		Title:          barang.Title,
+		SellerUsername: seller.Username,
+		Price:          barang.Price,
 	}
 
 	err = br.db.Create(&history).Error
@@ -111,5 +115,5 @@ func (br *BarangRepository) ContactBarang(param model.BarangContact) (entity.Bar
 		return entity.Barang{}, entity.User{}, err
 	}
 
-	return barang, user, nil
+	return barang, seller, nil
 }

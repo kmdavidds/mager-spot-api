@@ -35,6 +35,7 @@ func (r *Rest) MountEndpoint() {
 
 	routerGroup.PATCH("/update-user", r.middleware.AuthenticateUser, r.UpdateUser)
 	routerGroup.PATCH("/update-photo", r.middleware.AuthenticateUser, r.UpdatePhoto)
+	routerGroup.GET("/history", r.middleware.AuthenticateUser, r.ShowHistory)
 
 	barang := routerGroup.Group("/barangs")
 	barang.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateBarang)
