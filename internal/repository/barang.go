@@ -8,7 +8,7 @@ import (
 
 type IBarangRepository interface {
 	CreateBarang(barang entity.Barang) (entity.Barang, error)
-	GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error)
+	GetBarang(param model.BarangParam) (entity.BarangWithAuthor, []entity.Comment, error)
 	GetAllBarang() ([]entity.BarangWithAuthor, error)
 }
 
@@ -31,20 +31,33 @@ func (br *BarangRepository) CreateBarang(barang entity.Barang) (entity.Barang, e
 	return barang, nil
 }
 
-func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.Barang, []entity.Comment, error) {
+func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.BarangWithAuthor, []entity.Comment, error) {
+	
 	barang := entity.Barang{}
 	err := br.db.Where(&param).First(&barang).Error
 	if err != nil {
-		return barang, nil, err
+		return entity.BarangWithAuthor{}, nil, err
+	}
+
+	user := entity.User{}
+	err = br.db.Where("id = ?", barang.UserID).First(&user).Error
+	if err != nil {
+		return entity.BarangWithAuthor{}, nil, err
+	}
+
+	barangWithAuthor := entity.BarangWithAuthor{
+		Barang: barang,
+		Username: user.Username,
+		PhotoLink: user.ProfilePhotoLink,
 	}
 
 	comments := []entity.Comment{}
 	err = br.db.Where("post_id = ?", barang.ID).Find(&comments).Error
 	if err != nil {
-		return barang, nil, err
+		return barangWithAuthor, nil, err
 	}
 
-	return barang, comments, nil
+	return barangWithAuthor, comments, nil
 }
 
 func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
