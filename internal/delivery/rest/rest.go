@@ -39,6 +39,7 @@ func (r *Rest) MountEndpoint() {
 	barang.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateBarang)
 	barang.GET("", r.middleware.AuthenticateUser, r.FetchAllBarang)
 	barang.GET("/:id", r.middleware.AuthenticateUser, r.FetchBarang)
+	barang.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	
 }
 
