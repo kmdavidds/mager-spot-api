@@ -16,3 +16,9 @@ type Makanan struct {
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	Varian      string    `json:"varian" gorm:"not null"`
 }
+
+type MakananWithAuthor struct {
+	Makanan   Makanan `json:"makanan"`
+	Username  string  `json:"username"`
+	PhotoLink string  `json:"photoLink"`
+}

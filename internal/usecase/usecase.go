@@ -11,6 +11,7 @@ type Usecase struct {
 	UserUsecase    IUserUsecase
 	BarangUsecase  IBarangUsecase
 	KosUsecase     IKosUsecase
+	MakananUsecase IMakananUsecase
 	CommentUsecase ICommentUsecase
 }
 
@@ -25,12 +26,14 @@ func NewUsecase(param InitParam) *Usecase {
 	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
 	barangUsecase := NewBarangUsecase(param.Repository.BarangRepository, param.Supabase)
 	kosUsecase := NewKosUsecase(param.Repository.KosRepository, param.Supabase)
+	makananUsecase := NewMakananUsecase(param.Repository.MakananRepository, param.Supabase)
 	commentUsecase := NewCommentUsecase(param.Repository.CommentRepository)
 
 	return &Usecase{
 		UserUsecase:    userUsecase,
 		BarangUsecase:  barangUsecase,
 		KosUsecase: kosUsecase,
+		MakananUsecase: makananUsecase,
 		CommentUsecase: commentUsecase,
 	}
 }
