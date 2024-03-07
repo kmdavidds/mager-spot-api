@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/google/uuid"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 )
@@ -55,5 +56,30 @@ func (r *Rest) FetchAllBarang(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"barangs": barangs,
+	})
+}
+
+func (r *Rest) FetchBarang(ctx *gin.Context) {
+	id := ctx.Param("id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to parse barang id",
+			"error":   err,
+		})
+		return
+	}
+
+	barang, err := r.usecase.BarangUsecase.GetBarang(model.BarangParam{ID: parsedId})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get barang",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"barang": barang,
 	})
 }

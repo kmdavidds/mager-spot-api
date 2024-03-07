@@ -38,7 +38,7 @@ func (r *Rest) MountEndpoint() {
 	barang := routerGroup.Group("/barangs")
 	barang.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateBarang)
 	barang.GET("", r.middleware.AuthenticateUser, r.FetchAllBarang)
-	// barang.GET("/:id", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.FetchBarang)
+	barang.GET("/:id", r.middleware.AuthenticateUser, r.FetchBarang)
 	
 }
 
