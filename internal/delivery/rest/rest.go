@@ -33,7 +33,9 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
 
-	// post := routerGroup.Group("/posts")
+	barang := routerGroup.Group("/barangs")
+	barang.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateBarang)
+	
 }
 
 func (r *Rest) Serve() {

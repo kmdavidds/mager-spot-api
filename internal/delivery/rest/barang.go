@@ -8,8 +8,8 @@ import (
 	"github.com/kmdavidds/mager-spot-api/model"
 )
 
-func (r *Rest) CreatePost(ctx *gin.Context) {
-	param := model.PostCreate{}
+func (r *Rest) CreateBarang(ctx *gin.Context) {
+	param := model.BarangCreate{}
 
 	err := ctx.ShouldBindJSON(&param)
 	if err != nil {
@@ -30,7 +30,7 @@ func (r *Rest) CreatePost(ctx *gin.Context) {
 
 	param.UserID = user.(entity.User).ID
 
-	err = r.usecase.PostUsecase.CreatePost(param)
+	err = r.usecase.BarangUsecase.CreateBarang(param)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to create post",
