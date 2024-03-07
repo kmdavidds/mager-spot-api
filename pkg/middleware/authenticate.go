@@ -19,7 +19,7 @@ func (m *middleware) AuthenticateUser(ctx *gin.Context) {
 	}
 
 	token := strings.Split(bearer, " ")[1]
-	userId, err := m.jwt.ValidateToken(token)
+	userId, err := m.jwtAuth.ValidateToken(token)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed to validate token",

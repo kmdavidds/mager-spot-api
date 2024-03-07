@@ -7,7 +7,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/pkg/bcrypt"
 	"github.com/kmdavidds/mager-spot-api/pkg/config"
 	"github.com/kmdavidds/mager-spot-api/pkg/database/postgresql"
-	"github.com/kmdavidds/mager-spot-api/pkg/jwt"
+	"github.com/kmdavidds/mager-spot-api/pkg/jwt_auth"
 	"github.com/kmdavidds/mager-spot-api/pkg/middleware"
 )
 
@@ -18,7 +18,7 @@ func init() {
 func main() {
 	bcrypt := bcrypt.Init()
 
-	jwt := jwt.Init()
+	jwtAuth := jwt_auth.Init()
 
 	db := postgresql.ConnectDatabase()
 
@@ -29,7 +29,7 @@ func main() {
 	usecase := usecase.NewUsecase(usecase.InitParam{
 		Repository: repository,
 		Bcrypt:     bcrypt,
-		JWT:        jwt,
+		JWTAuth:    jwtAuth,
 	})
 
 	middleware := middleware.Init(usecase)

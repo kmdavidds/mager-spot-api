@@ -6,7 +6,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/internal/repository"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"github.com/kmdavidds/mager-spot-api/pkg/bcrypt"
-	"github.com/kmdavidds/mager-spot-api/pkg/jwt"
+	"github.com/kmdavidds/mager-spot-api/pkg/jwt_auth"
 )
 
 type IUserUsecase interface {
@@ -16,16 +16,16 @@ type IUserUsecase interface {
 }
 
 type UserUsecase struct {
-	ur     repository.IUserRepository
-	bcrypt bcrypt.Interface
-	jwt    jwt.Interface
+	ur      repository.IUserRepository
+	bcrypt  bcrypt.Interface
+	jwtAuth jwt_auth.Interface
 }
 
-func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwt jwt.Interface) IUserUsecase {
+func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface) IUserUsecase {
 	return &UserUsecase{
-		ur:     userRepository,
-		bcrypt: bcrypt,
-		jwt:    jwt,
+		ur:      userRepository,
+		bcrypt:  bcrypt,
+		jwtAuth: jwtAuth,
 	}
 }
 
@@ -70,7 +70,7 @@ func (uu *UserUsecase) Login(param model.UserLogin) (model.UserLoginResponse, er
 		return result, err
 	}
 
-	token, err := uu.jwt.CreateJWTToken(user.ID)
+	token, err := uu.jwtAuth.CreateJWTToken(user.ID)
 	if err != nil {
 		return result, err
 	}

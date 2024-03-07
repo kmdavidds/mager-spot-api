@@ -3,7 +3,7 @@ package usecase
 import (
 	"github.com/kmdavidds/mager-spot-api/internal/repository"
 	"github.com/kmdavidds/mager-spot-api/pkg/bcrypt"
-	"github.com/kmdavidds/mager-spot-api/pkg/jwt"
+	"github.com/kmdavidds/mager-spot-api/pkg/jwt_auth"
 )
 
 type Usecase struct {
@@ -14,11 +14,11 @@ type Usecase struct {
 type InitParam struct {
 	Repository *repository.Repository
 	Bcrypt     bcrypt.Interface
-	JWT        jwt.Interface
+	JWTAuth    jwt_auth.Interface
 }
 
 func NewUsecase(param InitParam) *Usecase {
-	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWT)
+	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth)
 	postUsecase := NewPostUsecase(param.Repository.PostRepository)
 
 	return &Usecase{
