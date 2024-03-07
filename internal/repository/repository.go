@@ -7,6 +7,7 @@ type Repository struct {
 	BarangRepository  IBarangRepository
 	KosRepository     IKosRepository
 	MakananRepository IMakananRepository
+	OjekRepository    IOjekRepository
 	CommentRepository ICommentRepository
 }
 
@@ -15,6 +16,7 @@ func NewRepository(db *gorm.DB) *Repository {
 	barangRepository := NewBarangRepository(db)
 	kosRepository := NewKosRepository(db)
 	makananRepository := NewMakananRepository(db)
+	ojekRepository := NewOjekRepository(db)
 	commentRepository := NewCommentRepository(db)
 
 	return &Repository{
@@ -23,5 +25,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		KosRepository:     kosRepository,
 		CommentRepository: commentRepository,
 		MakananRepository: makananRepository,
+		OjekRepository:    ojekRepository,
 	}
 }

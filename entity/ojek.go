@@ -16,3 +16,9 @@ type Ojek struct {
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	PlatNomor   string    `json:"platNomor" gorm:"not null"`
 }
+
+type OjekWithAuthor struct {
+	Ojek      Ojek   `json:"ojek"`
+	Username  string `json:"username"`
+	PhotoLink string `json:"photoLink"`
+}

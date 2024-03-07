@@ -57,6 +57,13 @@ func (r *Rest) MountEndpoint() {
 	makanan.GET("/:id", r.middleware.AuthenticateUser, r.FetchMakanan)
 	makanan.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	makanan.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactMakanan)
+
+	ojek := routerGroup.Group("/ojeks")
+	ojek.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateOjek)
+	ojek.GET("", r.middleware.AuthenticateUser, r.FetchAllOjek)
+	ojek.GET("/:id", r.middleware.AuthenticateUser, r.FetchOjek)
+	ojek.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
+	ojek.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactOjek)
 }
 
 func (r *Rest) Serve() {
