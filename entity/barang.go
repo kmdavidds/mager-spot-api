@@ -16,3 +16,9 @@ type Barang struct {
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	Pemakaian   string    `json:"pemakaian" gorm:"not null"`
 }
+
+type BarangWithAuthor struct {
+	Barang    Barang `json:"barang"`
+	Username  string `json:"username"`
+	PhotoLink string `json:"photoLink"`
+}

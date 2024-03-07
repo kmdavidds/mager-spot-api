@@ -14,7 +14,7 @@ import (
 type IBarangUsecase interface {
 	GetBarang(param model.BarangParam) (entity.Barang, error)
 	CreateBarang(param model.BarangCreate) error
-	GetAllBarang() ([]entity.Barang, error)
+	GetAllBarang() ([]entity.BarangWithAuthor, error)
 }
 
 type BarangUsecase struct {
@@ -61,7 +61,7 @@ func (bu *BarangUsecase) CreateBarang(param model.BarangCreate) error {
 	return nil
 }
 
-func (bu *BarangUsecase) GetAllBarang() ([]entity.Barang, error) {
+func (bu *BarangUsecase) GetAllBarang() ([]entity.BarangWithAuthor, error) {
 	barangs, err := bu.br.GetAllBarang()
 	if err != nil {
 		return nil, err

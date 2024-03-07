@@ -9,7 +9,7 @@ import (
 type IBarangRepository interface {
 	CreateBarang(barang entity.Barang) (entity.Barang, error)
 	GetBarang(param model.BarangParam) (entity.Barang, error)
-	GetAllBarang() ([]entity.Barang, error)
+	GetAllBarang() ([]entity.BarangWithAuthor, error)
 }
 
 type BarangRepository struct {
@@ -41,11 +41,27 @@ func (br *BarangRepository) GetBarang(param model.BarangParam) (entity.Barang, e
 	return barang, nil
 }
 
-func (br *BarangRepository) GetAllBarang() ([]entity.Barang, error) {
+func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
 	barangs := []entity.Barang{}
 	err := br.db.Find(&barangs).Error
 	if err != nil {
-		return barangs, err
+		return nil, err
 	}
-	return barangs, nil
+
+	barangsWithAuthor := []entity.BarangWithAuthor{}
+
+	for _, barang := range barangs {
+		user := entity.User{}
+		err := br.db.Where("id = ?", barang.UserID).First(&user).Error
+		if err != nil {
+			return nil, err
+		}
+		barangsWithAuthor = append(barangsWithAuthor, entity.BarangWithAuthor{
+			Barang: barang,
+			Username: user.Username,
+			PhotoLink: user.ProfilePhotoLink,
+		})
+	}
+
+	return barangsWithAuthor, nil
 }
