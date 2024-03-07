@@ -12,6 +12,6 @@ type Post struct {
 	Title       string    `json:"title" gorm:"not null"`
 	Price       string    `json:"price" gorm:"not null"`
 	Body        string    `json:"body" gorm:"not null"`
-	PictureLink string    `json:"-"`
+	PictureLink string    `json:"pictureLink"`
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
 }

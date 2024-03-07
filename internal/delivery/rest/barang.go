@@ -42,3 +42,18 @@ func (r *Rest) CreateBarang(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, gin.H{})
 }
+
+func (r *Rest) FetchAllBarang(ctx *gin.Context) {
+	barangs, err := r.usecase.BarangUsecase.GetAllBarang()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed get barangs",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"barangs": barangs,
+	})
+}

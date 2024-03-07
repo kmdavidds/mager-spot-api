@@ -14,6 +14,7 @@ import (
 type IBarangUsecase interface {
 	GetBarang(param model.BarangParam) (entity.Barang, error)
 	CreateBarang(param model.BarangCreate) error
+	GetAllBarang() ([]entity.Barang, error)
 }
 
 type BarangUsecase struct {
@@ -42,17 +43,13 @@ func (bu *BarangUsecase) CreateBarang(param model.BarangCreate) error {
 		return err
 	}
 
-	post := entity.Post{
+	barang := entity.Barang{
 		ID:          param.ID,
 		UserID:      param.UserID,
 		Title:       param.Title,
 		Price:       param.Price,
 		Body:        param.Body,
 		PictureLink: imageLink,
-	}
-
-	barang := entity.Barang{
-		Post:      post,
 		Pemakaian: param.Pemakaian,
 	}
 
@@ -62,4 +59,13 @@ func (bu *BarangUsecase) CreateBarang(param model.BarangCreate) error {
 	}
 
 	return nil
+}
+
+func (bu *BarangUsecase) GetAllBarang() ([]entity.Barang, error) {
+	barangs, err := bu.br.GetAllBarang()
+	if err != nil {
+		return nil, err
+	}
+
+	return barangs, nil
 }
