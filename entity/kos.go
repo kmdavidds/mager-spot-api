@@ -16,3 +16,9 @@ type Kos struct {
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	Pembayaran  string    `json:"pembayaran" gorm:"not null"`
 }
+
+type KosWithAuthor struct {
+	Kos       Kos    `json:"kos"`
+	Username  string `json:"username"`
+	PhotoLink string `json:"photoLink"`
+}

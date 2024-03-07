@@ -8,8 +8,9 @@ import (
 )
 
 type Usecase struct {
-	UserUsecase   IUserUsecase
-	BarangUsecase IBarangUsecase
+	UserUsecase    IUserUsecase
+	BarangUsecase  IBarangUsecase
+	KosUsecase     IKosUsecase
 	CommentUsecase ICommentUsecase
 }
 
@@ -23,11 +24,13 @@ type InitParam struct {
 func NewUsecase(param InitParam) *Usecase {
 	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
 	barangUsecase := NewBarangUsecase(param.Repository.BarangRepository, param.Supabase)
+	kosUsecase := NewKosUsecase(param.Repository.KosRepository, param.Supabase)
 	commentUsecase := NewCommentUsecase(param.Repository.CommentRepository)
 
 	return &Usecase{
-		UserUsecase: userUsecase,
-		BarangUsecase: barangUsecase,
+		UserUsecase:    userUsecase,
+		BarangUsecase:  barangUsecase,
+		KosUsecase: kosUsecase,
 		CommentUsecase: commentUsecase,
 	}
 }
