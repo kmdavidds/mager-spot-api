@@ -84,3 +84,32 @@ func (r *Rest) FetchBarang(ctx *gin.Context) {
 		"comments":         comments,
 	})
 }
+
+func (r *Rest) ContactBarang(ctx *gin.Context) {
+	id := ctx.Param("id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to parse barang id",
+			"error":   err,
+		})
+		return
+	}
+
+	param := model.BarangContact{
+		ID: parsedId,
+	}
+
+	contactLink, err := r.usecase.BarangUsecase.ContactBarang(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed get contact link",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"contactLink": contactLink,
+	})
+}

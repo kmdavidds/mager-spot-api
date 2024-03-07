@@ -22,3 +22,9 @@ type BarangParam struct {
 	ID     uuid.UUID `json:"-"`
 	UserID uuid.UUID `json:"-"`
 }
+
+type BarangContact struct {
+	ID          uuid.UUID `json:"-"`
+	UserID      uuid.UUID `json:"-"`
+	ContactLink string    `json:"contactLink"`
+}

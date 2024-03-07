@@ -10,6 +10,7 @@ type IBarangRepository interface {
 	CreateBarang(barang entity.Barang) (entity.Barang, error)
 	GetBarang(param model.BarangParam) (entity.BarangWithAuthor, []entity.Comment, error)
 	GetAllBarang() ([]entity.BarangWithAuthor, error)
+	ContactBarang(param model.BarangContact) (entity.Barang, entity.User, error)
 }
 
 type BarangRepository struct {
@@ -83,4 +84,20 @@ func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
 	}
 
 	return barangsWithAuthor, nil
+}
+
+func (br *BarangRepository) ContactBarang(param model.BarangContact) (entity.Barang, entity.User, error) {
+	barang := entity.Barang{}
+	err := br.db.Where("id = ?", param.ID).First(&barang).Error
+	if err != nil {
+		return entity.Barang{}, entity.User{}, err
+	}
+
+	user := entity.User{}
+	err = br.db.Where("id = ?", barang.UserID).First(&user).Error
+	if err != nil {
+		return entity.Barang{}, entity.User{}, err
+	}
+
+	return barang, user, nil
 }
