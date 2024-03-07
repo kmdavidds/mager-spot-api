@@ -23,7 +23,7 @@ type InitParam struct {
 func NewUsecase(param InitParam) *Usecase {
 	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
 	postUsecase := NewPostUsecase(param.Repository.PostRepository)
-	barangUsecase := NewBarangUsecase(param.Repository.BarangRepository)
+	barangUsecase := NewBarangUsecase(param.Repository.BarangRepository, param.Supabase)
 
 	return &Usecase{
 		UserUsecase: userUsecase,

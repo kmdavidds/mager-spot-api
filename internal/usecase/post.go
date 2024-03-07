@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/internal/repository"
 	"github.com/kmdavidds/mager-spot-api/model"
@@ -28,20 +27,20 @@ func (pu *PostUsecase) GetPost(param model.PostParam) (entity.Post, error) {
 }
 
 func (pu *PostUsecase) CreatePost(param model.PostCreate) error {
-	param.ID = uuid.New()
+	// param.ID = uuid.New()
 
-	post := entity.Post{
-		ID:     param.ID,
-		UserID: param.UserID,
-		Title:  param.Title,
-		Price:  param.Price,
-		Body:   param.Body,
-	}
+	// post := entity.Post{
+	// 	ID:     param.ID,
+	// 	UserID: param.UserID,
+	// 	Title:  param.Title,
+	// 	Price:  param.Price,
+	// 	Body:   param.Body,
+	// }
 
-	_, err := pu.pr.CreatePost(post)
-	if err != nil {
-		return err
-	}
+	// _, err := pu.pr.CreatePost(post)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

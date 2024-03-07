@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 )
@@ -11,7 +12,7 @@ import (
 func (r *Rest) CreateBarang(ctx *gin.Context) {
 	param := model.BarangCreate{}
 
-	err := ctx.ShouldBindJSON(&param)
+	err := ctx.ShouldBindWith(&param, binding.FormMultipart)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to bind request body",
