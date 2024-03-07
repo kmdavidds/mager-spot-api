@@ -9,6 +9,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/pkg/database/postgresql"
 	"github.com/kmdavidds/mager-spot-api/pkg/jwt_auth"
 	"github.com/kmdavidds/mager-spot-api/pkg/middleware"
+	"github.com/kmdavidds/mager-spot-api/pkg/supabase"
 )
 
 func init() {
@@ -20,6 +21,8 @@ func main() {
 
 	jwtAuth := jwt_auth.Init()
 
+	supabase := supabase.Init()
+
 	db := postgresql.ConnectDatabase()
 
 	postgresql.Migrate(db)
@@ -30,6 +33,7 @@ func main() {
 		Repository: repository,
 		Bcrypt:     bcrypt,
 		JWTAuth:    jwtAuth,
+		Supabase:   supabase,
 	})
 
 	middleware := middleware.Init(usecase)

@@ -7,6 +7,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/model"
 	"github.com/kmdavidds/mager-spot-api/pkg/bcrypt"
 	"github.com/kmdavidds/mager-spot-api/pkg/jwt_auth"
+	"github.com/kmdavidds/mager-spot-api/pkg/supabase"
 )
 
 type IUserUsecase interface {
@@ -16,16 +17,18 @@ type IUserUsecase interface {
 }
 
 type UserUsecase struct {
-	ur      repository.IUserRepository
-	bcrypt  bcrypt.Interface
-	jwtAuth jwt_auth.Interface
+	ur       repository.IUserRepository
+	bcrypt   bcrypt.Interface
+	jwtAuth  jwt_auth.Interface
+	supabase supabase.Interface
 }
 
-func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface) IUserUsecase {
+func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
 	return &UserUsecase{
 		ur:      userRepository,
 		bcrypt:  bcrypt,
 		jwtAuth: jwtAuth,
+		supabase: supabase,
 	}
 }
 
