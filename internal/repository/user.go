@@ -9,6 +9,7 @@ import (
 type IUserRepository interface {
 	CreateUser(user entity.User) (entity.User, error)
 	GetUser(param model.UserParam) (entity.User, error)
+	UpdateUser(param model.UserUpdates, user entity.User) error
 }
 
 type UserRepository struct {
@@ -38,4 +39,13 @@ func (ur *UserRepository) GetUser(param model.UserParam) (entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (ur *UserRepository) UpdateUser(param model.UserUpdates, user entity.User) error {
+	err := ur.db.Model(&user).Updates(param).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

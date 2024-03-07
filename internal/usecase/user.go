@@ -16,6 +16,7 @@ type IUserUsecase interface {
 	Register(param model.UserRegister) error
 	Login(param model.UserLogin) (model.UserLoginResponse, error)
 	GetUser(param model.UserParam) (entity.User, error)
+	UpdateUser(param model.UserUpdates, user entity.User) error
 }
 
 type UserUsecase struct {
@@ -89,4 +90,13 @@ func (uu *UserUsecase) Login(param model.UserLogin) (model.UserLoginResponse, er
 
 func (uu *UserUsecase) GetUser(param model.UserParam) (entity.User, error) {
 	return uu.ur.GetUser(param)
+}
+
+func (uu *UserUsecase) UpdateUser(param model.UserUpdates, user entity.User) error {
+	err := uu.ur.UpdateUser(param, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

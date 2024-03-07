@@ -22,3 +22,9 @@ type UserParam struct {
 	ID       uuid.UUID `json:"-"`
 	Username string    `json:"-"`
 }
+
+type UserUpdates struct {
+	DisplayName      string    `json:"displayName"`
+	PhoneNumber      string    `json:"phoneNumber"`
+	Address          string    `json:"address"`
+}
