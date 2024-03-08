@@ -19,6 +19,8 @@
 # vendor/
 tmp
 .air.toml
+dockerfile
+.dockerignore
 
 # Go workspace file
 go.work
