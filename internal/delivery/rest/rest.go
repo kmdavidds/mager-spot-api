@@ -43,27 +43,6 @@ func (r *Rest) MountEndpoint() {
 	barang.GET("/:id", r.middleware.AuthenticateUser, r.FetchBarang)
 	barang.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	barang.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactBarang)
-
-	kos := routerGroup.Group("/koss")
-	kos.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateKos)
-	kos.GET("", r.middleware.AuthenticateUser, r.FetchAllKos)
-	kos.GET("/:id", r.middleware.AuthenticateUser, r.FetchKos)
-	kos.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
-	kos.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactKos)
-	
-	makanan := routerGroup.Group("/makanans")
-	makanan.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateMakanan)
-	makanan.GET("", r.middleware.AuthenticateUser, r.FetchAllMakanan)
-	makanan.GET("/:id", r.middleware.AuthenticateUser, r.FetchMakanan)
-	makanan.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
-	makanan.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactMakanan)
-
-	ojek := routerGroup.Group("/ojeks")
-	ojek.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateOjek)
-	ojek.GET("", r.middleware.AuthenticateUser, r.FetchAllOjek)
-	ojek.GET("/:id", r.middleware.AuthenticateUser, r.FetchOjek)
-	ojek.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
-	ojek.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactOjek)
 }
 
 func (r *Rest) Serve() {

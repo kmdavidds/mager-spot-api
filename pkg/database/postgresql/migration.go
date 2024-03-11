@@ -11,9 +11,9 @@ func Migrate(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&entity.User{},
 		&entity.Barang{},
-		&entity.Kos{},
-		&entity.Makanan{},
-		&entity.Ojek{},
+		// &entity.Kos{},
+		// &entity.Makanan{},
+		// &entity.Ojek{},
 		&entity.Comment{},
 		&entity.History{},
 	)

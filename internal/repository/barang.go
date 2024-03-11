@@ -71,6 +71,7 @@ func (br *BarangRepository) GetAllBarang() ([]entity.BarangWithAuthor, error) {
 
 	barangsWithAuthor := []entity.BarangWithAuthor{}
 
+	// TODO: Use preload instead
 	for _, barang := range barangs {
 		user := entity.User{}
 		err := br.db.Where("id = ?", barang.UserID).First(&user).Error
