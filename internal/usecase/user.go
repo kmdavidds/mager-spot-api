@@ -26,16 +26,14 @@ type IUserUsecase interface {
 
 type UserUsecase struct {
 	ur      repository.IUserRepository
-	ppr     repository.IProductPostRepository
 	bcrypt  bcrypt.Interface
 	jwtAuth jwt_auth.Interface
 	sb      supabase.Interface
 }
 
-func NewUserUsecase(userRepository repository.IUserRepository, productPostRepository repository.IProductPostRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
+func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
 	return &UserUsecase{
 		ur:      userRepository,
-		ppr:     productPostRepository,
 		bcrypt:  bcrypt,
 		jwtAuth: jwtAuth,
 		sb:      supabase,

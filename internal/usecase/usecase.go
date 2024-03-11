@@ -8,9 +8,12 @@ import (
 )
 
 type Usecase struct {
-	UserUsecase        IUserUsecase
-	ProductPostUsecase IProductPostUsecase
-	CommentUsecase     ICommentUsecase
+	UserUsecase          IUserUsecase
+	ApartmentPostUsecase IApartmentPostUsecase
+	FoodPostUsecase      IFoodPostUsecase
+	ProductPostUsecase   IProductPostUsecase
+	ShuttlePostUsecase   IShuttlePostUsecase
+	CommentUsecase       ICommentUsecase
 }
 
 type InitParam struct {
@@ -21,13 +24,19 @@ type InitParam struct {
 }
 
 func NewUsecase(param InitParam) *Usecase {
-	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Repository.ProductPostRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
+	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
+	foodPostUsecase := NewFoodPostUsecase(param.Repository.FoodPostRepository, param.Supabase)
+	apartmentPostUsecase := NewApartmentPostUsecase(param.Repository.ApartmentPostRepository, param.Supabase)
 	productPostUsecase := NewProductPostUsecase(param.Repository.ProductPostRepository, param.Supabase)
+	shuttlePostUsecase := NewShuttlePostUsecase(param.Repository.ShuttlePostRepository, param.Supabase)
 	commentUsecase := NewCommentUsecase(param.Repository.CommentRepository)
 
 	return &Usecase{
-		UserUsecase:        userUsecase,
-		ProductPostUsecase: productPostUsecase,
-		CommentUsecase:     commentUsecase,
+		UserUsecase:          userUsecase,
+		ApartmentPostUsecase: apartmentPostUsecase,
+		FoodPostUsecase:      foodPostUsecase,
+		ProductPostUsecase:   productPostUsecase,
+		ShuttlePostUsecase:   shuttlePostUsecase,
+		CommentUsecase:       commentUsecase,
 	}
 }

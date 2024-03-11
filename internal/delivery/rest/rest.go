@@ -38,11 +38,25 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/:category/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	routerGroup.GET("/:category/:id/contact", r.middleware.AuthenticateUser, r.GetContactLink)
 
+	apartmentPost := routerGroup.Group("/apartment-post")
+	apartmentPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateApartmentPost)
+	apartmentPost.GET("", r.middleware.AuthenticateUser, r.GetApartmentPosts)
+	apartmentPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetApartmentPost)
+	
+	foodPost := routerGroup.Group("/food-post")
+	foodPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateFoodPost)
+	foodPost.GET("", r.middleware.AuthenticateUser, r.GetFoodPosts)
+	foodPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetFoodPost)
+
 	productPost := routerGroup.Group("/product-post")
 	productPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateProductPost)
 	productPost.GET("", r.middleware.AuthenticateUser, r.GetProductPosts)
 	productPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetProductPost)
-
+	
+	shuttlePost := routerGroup.Group("/shuttle-post")
+	shuttlePost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateShuttlePost)
+	shuttlePost.GET("", r.middleware.AuthenticateUser, r.GetShuttlePosts)
+	shuttlePost.GET("/:id/", r.middleware.AuthenticateUser, r.GetShuttlePost)
 }
 
 func (r *Rest) Serve() {
