@@ -9,7 +9,7 @@ import (
 type History struct {
 	ID             uuid.UUID `json:"id" gorm:"primary_key"`
 	PostID         uuid.UUID `json:"postId" gorm:"primary_key;"`
-	TypeOfPost     string    `json:"typeOfPost"`
+	Category       string    `json:"category"`
 	UserID         uuid.UUID `json:"userId" gorm:"primary_key;foreignkey:ID;references:users;"`
 	CreatedAt      time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	Title          string    `json:"title"`

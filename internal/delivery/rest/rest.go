@@ -28,21 +28,21 @@ func NewRest(usecase *usecase.Usecase, middleware middleware.Interface) *Rest {
 func (r *Rest) MountEndpoint() {
 	routerGroup := r.router.Group("/api/v1")
 
-	routerGroup.GET("/login-user", r.middleware.AuthenticateUser, getLoginUser)
-
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
+	routerGroup.GET("/login-user", r.middleware.AuthenticateUser, getLoginUser)
 
 	routerGroup.PATCH("/update-user", r.middleware.AuthenticateUser, r.UpdateUser)
 	routerGroup.PATCH("/update-photo", r.middleware.AuthenticateUser, r.UpdatePhoto)
 	routerGroup.GET("/history", r.middleware.AuthenticateUser, r.ShowHistory)
+	routerGroup.POST("/:category/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
+	routerGroup.GET("/:category/:id/contact", r.middleware.AuthenticateUser, r.GetContactLink)
 
-	barang := routerGroup.Group("/barangs")
-	barang.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateBarang)
-	barang.GET("", r.middleware.AuthenticateUser, r.FetchAllBarang)
-	barang.GET("/:id", r.middleware.AuthenticateUser, r.FetchBarang)
-	barang.POST("/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
-	barang.GET("/:id/contact", r.middleware.AuthenticateUser, r.ContactBarang)
+	productPost := routerGroup.Group("/product-post")
+	productPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateProductPost)
+	productPost.GET("", r.middleware.AuthenticateUser, r.GetProductPosts)
+	productPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetProductPost)
+
 }
 
 func (r *Rest) Serve() {

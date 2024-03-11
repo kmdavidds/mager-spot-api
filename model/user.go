@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 
 	"github.com/google/uuid"
+	"github.com/kmdavidds/mager-spot-api/entity"
 )
 
 type UserRegister struct {
@@ -37,4 +38,11 @@ type PhotoUpdate struct {
 	UserID    uuid.UUID             `json:"-"`
 	PhotoLink string                `json:"-"`
 	Image     *multipart.FileHeader `form:"image" binding:"required"`
+}
+
+type SellerContact struct {
+	User        entity.User
+	Seller      entity.User
+	ProductPost entity.ProductPost
+	Category    string
 }

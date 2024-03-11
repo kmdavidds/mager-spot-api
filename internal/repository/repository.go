@@ -3,28 +3,19 @@ package repository
 import "gorm.io/gorm"
 
 type Repository struct {
-	UserRepository    IUserRepository
-	BarangRepository  IBarangRepository
-	// KosRepository     IKosRepository
-	// MakananRepository IMakananRepository
-	// OjekRepository    IOjekRepository
+	UserRepository        IUserRepository
+	ProductPostRepository IProductPostRepository
 	CommentRepository ICommentRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	userRepository := NewUserRepository(db)
-	barangRepository := NewBarangRepository(db)
-	// kosRepository := NewKosRepository(db)
-	// makananRepository := NewMakananRepository(db)
-	// ojekRepository := NewOjekRepository(db)
+	productPostRepository := NewProductPostRepository(db)
 	commentRepository := NewCommentRepository(db)
 
 	return &Repository{
-		UserRepository:    userRepository,
-		BarangRepository:  barangRepository,
-		// KosRepository:     kosRepository,
-		// MakananRepository: makananRepository,
-		// OjekRepository:    ojekRepository,
+		UserRepository:   userRepository,
+		ProductPostRepository: productPostRepository,
 		CommentRepository: commentRepository,
 	}
 }

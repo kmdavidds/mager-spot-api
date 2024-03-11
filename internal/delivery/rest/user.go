@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/google/uuid"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 )
@@ -143,5 +144,66 @@ func (r *Rest) ShowHistory(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"histories": historyAll,
+	})
+}
+
+func (r *Rest) GetContactLink(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed get login user",
+		})
+		return
+	}
+
+	id := ctx.Param("id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to parse post id",
+			"error":   err,
+		})
+		return
+	}
+
+	param := model.SellerContact{
+		User: user.(entity.User),
+	}
+
+	category := ctx.Param("category")
+	switch category {
+	case "product-post":
+		productPost, err := r.usecase.ProductPostUsecase.GetProductPost(model.ProductPostKey{ID: parsedId})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get product post",
+				"error":   err,
+			})
+			return
+		}
+		param.ProductPost = productPost
+		param.Seller = productPost.User
+	}
+
+	contactLink, err := r.usecase.UserUsecase.GetContactLink(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get contact link",
+			"error":   err,
+		})
+		return
+	}
+
+	err = r.usecase.UserUsecase.CreateHistoryRecord(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to create a history record",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"contactLink": contactLink,
 	})
 }

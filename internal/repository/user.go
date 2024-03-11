@@ -12,6 +12,7 @@ type IUserRepository interface {
 	UpdateUser(param model.UserUpdates, user entity.User) error
 	UpdatePhoto(param model.PhotoUpdate) error
 	ShowHistory(user entity.User) ([]entity.History, error)
+	CreateHistoryRecord(history entity.History) error
 }
 
 type UserRepository struct {
@@ -68,4 +69,13 @@ func (ur *UserRepository) ShowHistory(user entity.User) ([]entity.History, error
 	}
 
 	return histories, nil
+}
+
+func (ur *UserRepository) CreateHistoryRecord(history entity.History) error {
+	err := ur.db.Create(&history).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

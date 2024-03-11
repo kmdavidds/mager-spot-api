@@ -8,12 +8,9 @@ import (
 )
 
 type Usecase struct {
-	UserUsecase    IUserUsecase
-	BarangUsecase  IBarangUsecase
-	// KosUsecase     IKosUsecase
-	// MakananUsecase IMakananUsecase
-	// OjekUsecase    IOjekUsecase
-	CommentUsecase ICommentUsecase
+	UserUsecase        IUserUsecase
+	ProductPostUsecase IProductPostUsecase
+	CommentUsecase     ICommentUsecase
 }
 
 type InitParam struct {
@@ -24,19 +21,13 @@ type InitParam struct {
 }
 
 func NewUsecase(param InitParam) *Usecase {
-	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
-	barangUsecase := NewBarangUsecase(param.Repository.BarangRepository, param.Supabase)
-	// kosUsecase := NewKosUsecase(param.Repository.KosRepository, param.Supabase)
-	// makananUsecase := NewMakananUsecase(param.Repository.MakananRepository, param.Supabase)
-	// ojekUsecase := NewOjekUsecase(param.Repository.OjekRepository, param.Supabase)
+	userUsecase := NewUserUsecase(param.Repository.UserRepository, param.Repository.ProductPostRepository, param.Bcrypt, param.JWTAuth, param.Supabase)
+	productPostUsecase := NewProductPostUsecase(param.Repository.ProductPostRepository, param.Supabase)
 	commentUsecase := NewCommentUsecase(param.Repository.CommentRepository)
 
 	return &Usecase{
-		UserUsecase:    userUsecase,
-		BarangUsecase:  barangUsecase,
-		// KosUsecase:     kosUsecase,
-		// MakananUsecase: makananUsecase,
-		// OjekUsecase:    ojekUsecase,
-		CommentUsecase: commentUsecase,
+		UserUsecase:        userUsecase,
+		ProductPostUsecase: productPostUsecase,
+		CommentUsecase:     commentUsecase,
 	}
 }

@@ -41,7 +41,12 @@ func (r *Rest) CreateComment(ctx *gin.Context) {
 		return
 	}
 
-	param.PostID = parsedId
+	category := ctx.Param("category")
+
+	switch category {
+	case "product-post":
+		param.ProductPostID = parsedId
+	}
 
 	err = r.usecase.CommentUsecase.CreateComment(param)
 	if err != nil {

@@ -20,18 +20,22 @@ type IUserUsecase interface {
 	UpdateUser(param model.UserUpdates, user entity.User) error
 	UpdatePhoto(param model.PhotoUpdate) error
 	ShowHistory(user entity.User) ([]entity.History, error)
+	CreateHistoryRecord(param model.SellerContact) error
+	GetContactLink(param model.SellerContact) (string, error)
 }
 
 type UserUsecase struct {
 	ur      repository.IUserRepository
+	ppr     repository.IProductPostRepository
 	bcrypt  bcrypt.Interface
 	jwtAuth jwt_auth.Interface
 	sb      supabase.Interface
 }
 
-func NewUserUsecase(userRepository repository.IUserRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
+func NewUserUsecase(userRepository repository.IUserRepository, productPostRepository repository.IProductPostRepository, bcrypt bcrypt.Interface, jwtAuth jwt_auth.Interface, supabase supabase.Interface) IUserUsecase {
 	return &UserUsecase{
 		ur:      userRepository,
+		ppr:     productPostRepository,
 		bcrypt:  bcrypt,
 		jwtAuth: jwtAuth,
 		sb:      supabase,
@@ -131,4 +135,40 @@ func (uu *UserUsecase) UpdatePhoto(param model.PhotoUpdate) error {
 
 func (uu *UserUsecase) ShowHistory(user entity.User) ([]entity.History, error) {
 	return uu.ur.ShowHistory(user)
+}
+
+func (uu *UserUsecase) CreateHistoryRecord(param model.SellerContact) error {
+	history := entity.History{
+		ID:             uuid.New(),
+		Category:       param.Category,
+		UserID:         param.User.ID,
+		SellerUsername: param.Seller.Username,
+	}
+
+	switch param.Category {
+	case "product-post":
+		history.PostID = param.ProductPost.ID
+		history.Title = param.ProductPost.Title
+		history.Price = param.ProductPost.Price
+	}
+
+	return uu.ur.CreateHistoryRecord(history)
+}
+
+func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error) {
+	var postTitle string
+
+	switch param.Category {
+	case "product-post":
+		postTitle = param.ProductPost.Title
+	}
+
+	param.User.DisplayName = strings.ReplaceAll(param.User.DisplayName, " ", "%20")
+	postTitle = strings.ReplaceAll(postTitle, " ", "%20")
+
+	message := fmt.Sprintf("Halo%%2C%%20nama%%20saya%%20%s.%%0ASaya%%20tertarik%%20dengan%%20postingan%%20anda%%20yang%%20berjudul%%20%s.%%0AApakah%%20masih%%20tersedia%%3F", param.User.DisplayName, postTitle)
+
+	contactLink := fmt.Sprintf("https://wa.me/%s?text=%s", param.Seller.PhoneNumber, message)
+
+	return contactLink, nil
 }
