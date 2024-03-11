@@ -240,3 +240,27 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		"contactLink": contactLink,
 	})
 }
+
+func (r *Rest) AuthenticateEmail(ctx *gin.Context) {
+	param := model.EmailAuth{}
+
+	err := ctx.ShouldBindJSON(&param)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "failed to bind request body",
+			"error":   err,
+		})
+		return
+	}
+
+	_, err = r.usecase.UserUsecase.GetUser(model.UserParam{Email: param.Email})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get user",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{})
+}

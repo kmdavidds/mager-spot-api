@@ -31,6 +31,7 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
 	routerGroup.GET("/login-user", r.middleware.AuthenticateUser, getLoginUser)
+	routerGroup.POST("/auth-email", r.AuthenticateEmail)
 
 	routerGroup.PATCH("/update-user", r.middleware.AuthenticateUser, r.UpdateUser)
 	routerGroup.PATCH("/update-photo", r.middleware.AuthenticateUser, r.UpdatePhoto)

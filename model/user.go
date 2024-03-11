@@ -26,6 +26,7 @@ type UserLoginResponse struct {
 type UserParam struct {
 	ID       uuid.UUID `json:"-"`
 	Username string    `json:"-"`
+	Email    string    `json:"-"`
 }
 
 type UserUpdates struct {
@@ -48,4 +49,8 @@ type SellerContact struct {
 	ProductPost   entity.ProductPost
 	ShuttlePost   entity.ShuttlePost
 	Category      string
+}
+
+type EmailAuth struct {
+	Email string
 }
