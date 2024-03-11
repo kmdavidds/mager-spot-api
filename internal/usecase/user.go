@@ -144,10 +144,22 @@ func (uu *UserUsecase) CreateHistoryRecord(param model.SellerContact) error {
 	}
 
 	switch param.Category {
+	case "apartment-post":
+		history.PostID = param.ApartmentPost.ID
+		history.Title = param.ApartmentPost.Title
+		history.Price = param.ApartmentPost.Price
+	case "food-post":
+		history.PostID = param.FoodPost.ID
+		history.Title = param.FoodPost.Title
+		history.Price = param.FoodPost.Price
 	case "product-post":
 		history.PostID = param.ProductPost.ID
 		history.Title = param.ProductPost.Title
 		history.Price = param.ProductPost.Price
+	case "shuttle-post":
+		history.PostID = param.ShuttlePost.ID
+		history.Title = param.ShuttlePost.Title
+		history.Price = param.ShuttlePost.Price
 	}
 
 	return uu.ur.CreateHistoryRecord(history)
