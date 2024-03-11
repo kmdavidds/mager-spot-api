@@ -24,10 +24,13 @@ func NewCommentUsecase(commentRepository repository.ICommentRepository) IComment
 
 func (cu *CommentUsecase) CreateComment(param model.CommentCreate) error {
 	comment := entity.Comment{
-		ID:            uuid.New(),
-		ProductPostID: param.ProductPostID,
-		UserID:        param.UserID,
-		Body:          param.Body,
+		ID:              uuid.New(),
+		ApartmentPostID: param.ApartmentPostID,
+		FoodPostID:      param.FoodPostID,
+		ProductPostID:   param.ProductPostID,
+		ShuttlePostID:   param.ShuttlePostID,
+		UserID:          param.UserID,
+		Body:            param.Body,
 	}
 
 	_, err := cu.cr.CreateComment(comment)

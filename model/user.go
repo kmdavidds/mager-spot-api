@@ -41,8 +41,11 @@ type PhotoUpdate struct {
 }
 
 type SellerContact struct {
-	User        entity.User
-	Seller      entity.User
-	ProductPost entity.ProductPost
-	Category    string
+	User          entity.User
+	Seller        entity.User
+	ApartmentPost entity.ApartmentPost
+	FoodPost      entity.FoodPost
+	ProductPost   entity.ProductPost
+	ShuttlePost   entity.ShuttlePost
+	Category      string
 }

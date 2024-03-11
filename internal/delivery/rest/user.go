@@ -172,6 +172,28 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 
 	category := ctx.Param("category")
 	switch category {
+	case "apartment-post":
+		apartmentPost, err := r.usecase.ApartmentPostUsecase.GetApartmentPost(model.ApartmentPostKey{ID: parsedId})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get apartment post",
+				"error":   err,
+			})
+			return
+		}
+		param.ApartmentPost = apartmentPost
+		param.Seller = apartmentPost.User
+	case "food-post":
+		foodPost, err := r.usecase.FoodPostUsecase.GetFoodPost(model.FoodPostKey{ID: parsedId})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get food post",
+				"error":   err,
+			})
+			return
+		}
+		param.FoodPost = foodPost
+		param.Seller = foodPost.User
 	case "product-post":
 		productPost, err := r.usecase.ProductPostUsecase.GetProductPost(model.ProductPostKey{ID: parsedId})
 		if err != nil {
@@ -183,6 +205,17 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		}
 		param.ProductPost = productPost
 		param.Seller = productPost.User
+	case "shuttle-post":
+		shuttlePost, err := r.usecase.ShuttlePostUsecase.GetShuttlePost(model.ShuttlePostKey{ID: parsedId})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get shuttle post",
+				"error":   err,
+			})
+			return
+		}
+		param.ShuttlePost = shuttlePost
+		param.Seller = shuttlePost.User
 	}
 
 	contactLink, err := r.usecase.UserUsecase.GetContactLink(param)
