@@ -171,6 +171,12 @@ func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error)
 	switch param.Category {
 	case "product-post":
 		postTitle = param.ProductPost.Title
+	case "food-post":
+		postTitle = param.FoodPost.Title
+	case "apartment-post":
+		postTitle = param.ApartmentPost.Title
+	case "shuttle-post":
+		postTitle = param.ShuttlePost.Title
 	}
 
 	param.User.DisplayName = strings.ReplaceAll(param.User.DisplayName, " ", "%20")

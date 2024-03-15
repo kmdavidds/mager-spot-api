@@ -183,6 +183,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		}
 		param.ApartmentPost = apartmentPost
 		param.Seller = apartmentPost.User
+		param.Category = "apartment-post"
 	case "food-post":
 		foodPost, err := r.usecase.FoodPostUsecase.GetFoodPost(model.FoodPostKey{ID: parsedId})
 		if err != nil {
@@ -194,6 +195,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		}
 		param.FoodPost = foodPost
 		param.Seller = foodPost.User
+		param.Category = "food-post"
 	case "product-post":
 		productPost, err := r.usecase.ProductPostUsecase.GetProductPost(model.ProductPostKey{ID: parsedId})
 		if err != nil {
@@ -205,6 +207,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		}
 		param.ProductPost = productPost
 		param.Seller = productPost.User
+		param.Category = "product-post"
 	case "shuttle-post":
 		shuttlePost, err := r.usecase.ShuttlePostUsecase.GetShuttlePost(model.ShuttlePostKey{ID: parsedId})
 		if err != nil {
@@ -216,6 +219,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 		}
 		param.ShuttlePost = shuttlePost
 		param.Seller = shuttlePost.User
+		param.Category = "shuttle-post"
 	}
 
 	contactLink, err := r.usecase.UserUsecase.GetContactLink(param)
