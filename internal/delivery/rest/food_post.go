@@ -24,7 +24,7 @@ func (r *Rest) CreateFoodPost(ctx *gin.Context) {
 
 	user, ok := ctx.Get("user")
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed get login user",
 		})
 		return
@@ -63,7 +63,7 @@ func (r *Rest) GetFoodPost(ctx *gin.Context) {
 	id := ctx.Param("id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse food post id",
 			"error":   err,
 		})
