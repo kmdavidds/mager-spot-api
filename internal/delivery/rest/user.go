@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -26,7 +27,7 @@ func (r *Rest) Register(ctx *gin.Context) {
 
 	err = r.usecase.UserUsecase.Register(param)
 	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
+		if err.(*pgconn.PgError).Code == "23505" {
 			ctx.JSON(http.StatusConflict, gin.H{
 				"message": "user already exists",
 				"error":   err,
