@@ -21,4 +21,5 @@ type ProductPostCreate struct {
 type ProductPostKey struct {
 	ID       uuid.UUID
 	SellerID uuid.UUID
+	Title    string
 }

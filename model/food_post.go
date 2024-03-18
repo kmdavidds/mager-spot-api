@@ -21,4 +21,5 @@ type FoodPostCreate struct {
 type FoodPostKey struct {
 	ID       uuid.UUID
 	SellerID uuid.UUID
+	Title    string
 }

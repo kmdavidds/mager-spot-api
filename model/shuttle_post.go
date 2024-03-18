@@ -21,4 +21,5 @@ type ShuttlePostCreate struct {
 type ShuttlePostKey struct {
 	ID       uuid.UUID
 	SellerID uuid.UUID
+	Title    string
 }

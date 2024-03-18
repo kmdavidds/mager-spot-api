@@ -83,3 +83,29 @@ func (r *Rest) GetProductPost(ctx *gin.Context) {
 		"productPost": productPost,
 	})
 }
+
+func (r *Rest) SearchProductPosts(ctx *gin.Context) {
+	query := ctx.Query("query")
+	if query == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad query",
+		})
+		return
+	}
+
+	param := model.ProductPostKey{
+		Title: query,
+	}
+	productPosts, err := r.usecase.ProductPostUsecase.SearchProductPosts(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get product posts",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"productPosts": productPosts,
+	})
+}

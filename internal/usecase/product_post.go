@@ -16,6 +16,7 @@ type IProductPostUsecase interface {
 	CreateProductPost(param model.ProductPostCreate) error
 	GetProductPosts() ([]entity.ProductPost, error)
 	GetProductPost(key model.ProductPostKey) (entity.ProductPost, error)
+	SearchProductPosts(key model.ProductPostKey) ([]entity.ProductPost, error)
 }
 
 type ProductPostUsecase struct {
@@ -74,4 +75,12 @@ func (ppu *ProductPostUsecase) GetProductPost(key model.ProductPostKey) (entity.
 	}
 
 	return productPost, nil
+}
+
+func (ppu *ProductPostUsecase) SearchProductPosts(key model.ProductPostKey) ([]entity.ProductPost, error) {
+	foodPosts, err := ppu.ppr.SearchProductPosts(key)
+	if err != nil {
+		return foodPosts, err
+	}
+	return foodPosts, nil
 }

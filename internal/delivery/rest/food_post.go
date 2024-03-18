@@ -83,3 +83,29 @@ func (r *Rest) GetFoodPost(ctx *gin.Context) {
 		"foodPost": foodPost,
 	})
 }
+
+func (r *Rest) SearchFoodPosts(ctx *gin.Context) {
+	query := ctx.Query("query")
+	if query == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad query",
+		})
+		return
+	}
+
+	param := model.FoodPostKey{
+		Title: query,
+	}
+	foodPosts, err := r.usecase.FoodPostUsecase.SearchFoodPosts(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get food posts",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"foodPosts": foodPosts,
+	})
+}

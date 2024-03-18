@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -10,6 +12,7 @@ type IFoodPostRepository interface {
 	CreateFoodPost(foodPost entity.FoodPost) (entity.FoodPost, error)
 	GetFoodPosts() ([]entity.FoodPost, error)
 	GetFoodPost(key model.FoodPostKey) (entity.FoodPost, error)
+	SearchFoodPosts(key model.FoodPostKey) ([]entity.FoodPost, error)
 }
 
 type FoodPostRepository struct {
@@ -47,4 +50,13 @@ func (fpr *FoodPostRepository) GetFoodPost(key model.FoodPostKey) (entity.FoodPo
 		return foodPost, err
 	}
 	return foodPost, nil
+}
+
+func (fpr *FoodPostRepository) SearchFoodPosts(key model.FoodPostKey) ([]entity.FoodPost, error) {
+	foodPosts := []entity.FoodPost{}
+	err := fpr.db.Preload("User").Where("title ILIKE ?", fmt.Sprintf("%%%s%%", key.Title)).Find(&foodPosts).Error
+	if err != nil {
+		return nil, err
+	}
+	return foodPosts, nil
 }

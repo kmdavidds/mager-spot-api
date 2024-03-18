@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -10,6 +12,7 @@ type IShuttlePostRepository interface {
 	CreateShuttlePost(shutllePost entity.ShuttlePost) (entity.ShuttlePost, error)
 	GetShuttlePosts() ([]entity.ShuttlePost, error)
 	GetShuttlePost(key model.ShuttlePostKey) (entity.ShuttlePost, error)
+	SearchShuttlePosts(key model.ShuttlePostKey) ([]entity.ShuttlePost, error)
 }
 
 type ShuttlePostRepository struct {
@@ -47,4 +50,13 @@ func (spr *ShuttlePostRepository) GetShuttlePost(key model.ShuttlePostKey) (enti
 		return shutllePost, err
 	}
 	return shutllePost, nil
+}
+
+func (spr *ShuttlePostRepository) SearchShuttlePosts(key model.ShuttlePostKey) ([]entity.ShuttlePost, error) {
+	shuttlePosts := []entity.ShuttlePost{}
+	err := spr.db.Preload("User").Where("title ILIKE ?", fmt.Sprintf("%%%s%%", key.Title)).Find(&shuttlePosts).Error
+	if err != nil {
+		return nil, err
+	}
+	return shuttlePosts, nil
 }

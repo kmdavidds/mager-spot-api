@@ -16,6 +16,7 @@ type IShuttlePostUsecase interface {
 	CreateShuttlePost(param model.ShuttlePostCreate) error
 	GetShuttlePosts() ([]entity.ShuttlePost, error)
 	GetShuttlePost(key model.ShuttlePostKey) (entity.ShuttlePost, error)
+	SearchShuttlePosts(key model.ShuttlePostKey) ([]entity.ShuttlePost, error)
 }
 
 type ShuttlePostUsecase struct {
@@ -74,4 +75,12 @@ func (spu *ShuttlePostUsecase) GetShuttlePost(key model.ShuttlePostKey) (entity.
 	}
 
 	return shuttlePost, nil
+}
+
+func (spu *ShuttlePostUsecase) SearchShuttlePosts(key model.ShuttlePostKey) ([]entity.ShuttlePost, error) {
+	shuttlePosts, err := spu.spr.SearchShuttlePosts(key)
+	if err != nil {
+		return shuttlePosts, err
+	}
+	return shuttlePosts, nil
 }

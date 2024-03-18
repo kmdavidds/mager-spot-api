@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -10,6 +12,7 @@ type IProductPostRepository interface {
 	CreateProductPost(productPost entity.ProductPost) (entity.ProductPost, error)
 	GetProductPosts() ([]entity.ProductPost, error)
 	GetProductPost(key model.ProductPostKey) (entity.ProductPost, error)
+	SearchProductPosts(key model.ProductPostKey) ([]entity.ProductPost, error)
 }
 
 type ProductPostRepository struct {
@@ -47,4 +50,13 @@ func (ppr *ProductPostRepository) GetProductPost(key model.ProductPostKey) (enti
 		return productPost, err
 	}
 	return productPost, nil
+}
+
+func (ppr *ProductPostRepository) SearchProductPosts(key model.ProductPostKey) ([]entity.ProductPost, error) {
+	productPosts := []entity.ProductPost{}
+	err := ppr.db.Preload("User").Where("title ILIKE ?", fmt.Sprintf("%%%s%%", key.Title)).Find(&productPosts).Error
+	if err != nil {
+		return nil, err
+	}
+	return productPosts, nil
 }

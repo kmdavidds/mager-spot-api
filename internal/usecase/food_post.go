@@ -16,6 +16,7 @@ type IFoodPostUsecase interface {
 	CreateFoodPost(param model.FoodPostCreate) error
 	GetFoodPosts() ([]entity.FoodPost, error)
 	GetFoodPost(key model.FoodPostKey) (entity.FoodPost, error)
+	SearchFoodPosts(key model.FoodPostKey) ([]entity.FoodPost, error)
 }
 
 type FoodPostUsecase struct {
@@ -74,4 +75,12 @@ func (fpu *FoodPostUsecase) GetFoodPost(key model.FoodPostKey) (entity.FoodPost,
 	}
 
 	return foodPost, nil
+}
+
+func (fpu *FoodPostUsecase) SearchFoodPosts(key model.FoodPostKey) ([]entity.FoodPost, error) {
+	foodPosts, err := fpu.fpr.SearchFoodPosts(key)
+	if err != nil {
+		return foodPosts, err
+	}
+	return foodPosts, nil
 }

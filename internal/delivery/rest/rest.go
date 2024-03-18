@@ -49,16 +49,19 @@ func (r *Rest) MountEndpoint() {
 	foodPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateFoodPost)
 	foodPost.GET("", r.middleware.AuthenticateUser, r.GetFoodPosts)
 	foodPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetFoodPost)
-
+	foodPost.GET("/search", r.middleware.AuthenticateUser, r.SearchFoodPosts)
+	
 	productPost := routerGroup.Group("/product-post")
 	productPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateProductPost)
 	productPost.GET("", r.middleware.AuthenticateUser, r.GetProductPosts)
 	productPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetProductPost)
+	productPost.GET("/search", r.middleware.AuthenticateUser, r.SearchProductPosts)
 	
 	shuttlePost := routerGroup.Group("/shuttle-post")
 	shuttlePost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateShuttlePost)
 	shuttlePost.GET("", r.middleware.AuthenticateUser, r.GetShuttlePosts)
 	shuttlePost.GET("/:id/", r.middleware.AuthenticateUser, r.GetShuttlePost)
+	shuttlePost.GET("/search", r.middleware.AuthenticateUser, r.SearchShuttlePosts)
 }
 
 func (r *Rest) Serve() {

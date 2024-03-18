@@ -83,3 +83,29 @@ func (r *Rest) GetShuttlePost(ctx *gin.Context) {
 		"shuttlePost": shuttlePost,
 	})
 }
+
+func (r *Rest) SearchShuttlePosts(ctx *gin.Context) {
+	query := ctx.Query("query")
+	if query == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad query",
+		})
+		return
+	}
+
+	param := model.ShuttlePostKey{
+		Title: query,
+	}
+	shuttlePosts, err := r.usecase.ShuttlePostUsecase.SearchShuttlePosts(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get shuttle posts",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"shuttlePosts": shuttlePosts,
+	})
+}
