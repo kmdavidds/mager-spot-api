@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
+	"gorm.io/gorm"
 )
 
 func (r *Rest) Register(ctx *gin.Context) {
@@ -24,10 +26,22 @@ func (r *Rest) Register(ctx *gin.Context) {
 
 	err = r.usecase.UserUsecase.Register(param)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to register user",
-			"error":   err,
-		})
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			ctx.JSON(http.StatusConflict, gin.H{
+				"message": "user already exists",
+				"error":   err,
+			})
+		} else if errors.Is(err, gorm.ErrInvalidData) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "invalid input data",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to register user",
+				"error":   err,
+			})
+		}
 		return
 	}
 
@@ -48,10 +62,17 @@ func (r *Rest) Login(ctx *gin.Context) {
 
 	token, err := r.usecase.UserUsecase.Login(param)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to log in user",
-			"error":   err,
-		})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"message": "user not found or invalid credentials",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to log in user",
+				"error":   err,
+			})
+		}
 		return
 	}
 
@@ -72,7 +93,7 @@ func (r *Rest) UpdateUser(ctx *gin.Context) {
 
 	user, ok := ctx.Get("user")
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed to get login user",
 		})
 		return
@@ -80,9 +101,22 @@ func (r *Rest) UpdateUser(ctx *gin.Context) {
 
 	err = r.usecase.UserUsecase.UpdateUser(param, user.(entity.User))
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to update user",
-		})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "user not found",
+				"error":   err,
+			})
+		} else if errors.Is(err, gorm.ErrInvalidData) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "invalid input data",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to update user",
+				"error":   err,
+			})
+		}
 		return
 	}
 
@@ -103,7 +137,7 @@ func (r *Rest) UpdatePhoto(ctx *gin.Context) {
 
 	user, ok := ctx.Get("user")
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed get login user",
 		})
 		return
@@ -114,11 +148,22 @@ func (r *Rest) UpdatePhoto(ctx *gin.Context) {
 
 	err = r.usecase.UserUsecase.UpdatePhoto(param)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to update photo",
-			"error":   err,
-		})
-		return
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "user not found",
+				"error":   err,
+			})
+		} else if errors.Is(err, gorm.ErrInvalidData) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "invalid input data",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to update user photo",
+				"error":   err,
+			})
+		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{})
@@ -127,7 +172,7 @@ func (r *Rest) UpdatePhoto(ctx *gin.Context) {
 func (r *Rest) ShowHistory(ctx *gin.Context) {
 	user, ok := ctx.Get("user")
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed to get login user",
 		})
 		return
@@ -150,7 +195,7 @@ func (r *Rest) ShowHistory(ctx *gin.Context) {
 func (r *Rest) GetContactLink(ctx *gin.Context) {
 	user, ok := ctx.Get("user")
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"error": "failed get login user",
 		})
 		return
@@ -159,7 +204,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 	id := ctx.Param("id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse post id",
 			"error":   err,
 		})
@@ -224,10 +269,22 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 
 	contactLink, err := r.usecase.UserUsecase.GetContactLink(param)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to get contact link",
-			"error":   err,
-		})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "seller not found",
+				"error":   err,
+			})
+		} else if errors.Is(err, gorm.ErrInvalidData) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "invalid input data",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get contact link",
+				"error":   err,
+			})
+		}
 		return
 	}
 
@@ -259,10 +316,17 @@ func (r *Rest) AuthenticateEmail(ctx *gin.Context) {
 
 	_, err = r.usecase.UserUsecase.GetUser(model.UserParam{Email: param.Email})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to get user",
-			"error":   err,
-		})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "user not found",
+				"error":   err,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "failed to get user",
+				"error":   err,
+			})
+		}
 		return
 	}
 
