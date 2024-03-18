@@ -16,6 +16,7 @@ type IApartmentPostUsecase interface {
 	CreateApartmentPost(param model.ApartmentPostCreate) error
 	GetApartmentPosts() ([]entity.ApartmentPost, error)
 	GetApartmentPost(key model.ApartmentPostKey) (entity.ApartmentPost, error)
+	SearchApartmentPosts(key model.ApartmentPostKey) ([]entity.ApartmentPost, error)
 }
 
 type ApartmentPostUsecase struct {
@@ -74,4 +75,12 @@ func (apu *ApartmentPostUsecase) GetApartmentPost(key model.ApartmentPostKey) (e
 	}
 
 	return apartmentPost, nil
+}
+
+func (apu *ApartmentPostUsecase) SearchApartmentPosts(key model.ApartmentPostKey) ([]entity.ApartmentPost, error) {
+	apartmentPosts, err := apu.apr.SearchApartmentPosts(key)
+	if err != nil {
+		return apartmentPosts, err
+	}
+	return apartmentPosts, nil
 }

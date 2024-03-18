@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/model"
 	"gorm.io/gorm"
@@ -10,6 +12,7 @@ type IApartmentPostRepository interface {
 	CreateApartmentPost(apartmentPost entity.ApartmentPost) (entity.ApartmentPost, error)
 	GetApartmentPosts() ([]entity.ApartmentPost, error)
 	GetApartmentPost(key model.ApartmentPostKey) (entity.ApartmentPost, error)
+	SearchApartmentPosts(key model.ApartmentPostKey) ([]entity.ApartmentPost, error)
 }
 
 type ApartmentPostRepository struct {
@@ -47,4 +50,13 @@ func (apr *ApartmentPostRepository) GetApartmentPost(key model.ApartmentPostKey)
 		return apartmentPost, err
 	}
 	return apartmentPost, nil
+}
+
+func (apr *ApartmentPostRepository) SearchApartmentPosts(key model.ApartmentPostKey) ([]entity.ApartmentPost, error) {
+	apartmentPosts := []entity.ApartmentPost{}
+	err := apr.db.Preload("User").Where("title ILIKE ?", fmt.Sprintf("%%%s%%", key.Title)).Find(&apartmentPosts).Error
+	if err != nil {
+		return nil, err
+	}
+	return apartmentPosts, nil
 }

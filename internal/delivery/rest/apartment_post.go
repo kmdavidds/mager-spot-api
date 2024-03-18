@@ -83,3 +83,29 @@ func (r *Rest) GetApartmentPost(ctx *gin.Context) {
 		"apartmentPost": apartmentPost,
 	})
 }
+
+func (r *Rest) SearchApartmentPosts(ctx *gin.Context) {
+	query := ctx.Query("query")
+	if query == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad query",
+		})
+		return
+	}
+
+	param := model.ApartmentPostKey{
+		Title: query,
+	}
+	apartmentPosts, err := r.usecase.ApartmentPostUsecase.SearchApartmentPosts(param)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get apartment posts",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"apartmentPosts": apartmentPosts,
+	})
+}

@@ -21,4 +21,5 @@ type ApartmentPostCreate struct {
 type ApartmentPostKey struct {
 	ID       uuid.UUID
 	SellerID uuid.UUID
+	Title    string 
 }

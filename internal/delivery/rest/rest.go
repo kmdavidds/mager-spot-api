@@ -43,6 +43,7 @@ func (r *Rest) MountEndpoint() {
 	apartmentPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateApartmentPost)
 	apartmentPost.GET("", r.middleware.AuthenticateUser, r.GetApartmentPosts)
 	apartmentPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetApartmentPost)
+	apartmentPost.GET("/search", r.middleware.AuthenticateUser, r.SearchApartmentPosts)
 	
 	foodPost := routerGroup.Group("/food-post")
 	foodPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateFoodPost)
