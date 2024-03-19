@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"regexp"
 	"strconv"
 
 	"github.com/kmdavidds/mager-spot-api/entity"
@@ -27,6 +28,13 @@ func NewInvoiceUsecase(invoiceRepository repository.IInvoiceRepository, reposito
 	}
 }
 
+func convertToINT64(str string) int64 {
+	reg, _ := regexp.Compile("[^0-9]+")
+	cleanStr := reg.ReplaceAllString(str, "")
+	cleanInt, _ := strconv.Atoi(cleanStr)
+	return int64(cleanInt)
+}
+
 func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
@@ -40,41 +48,25 @@ func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		parsedPrice, err := strconv.Atoi(post.Price)
-		if err != nil {
-			return "", err
-		}
-		req.TransactionDetails.GrossAmt = int64(parsedPrice)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
 	case "food-post":
 		post, err := iu.r.FoodPostRepository.GetFoodPost(model.FoodPostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		parsedPrice, err := strconv.Atoi(post.Price)
-		if err != nil {
-			return "", err
-		}
-		req.TransactionDetails.GrossAmt = int64(parsedPrice)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
 	case "product-post":
 		post, err := iu.r.ProductPostRepository.GetProductPost(model.ProductPostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		parsedPrice, err := strconv.Atoi(post.Price)
-		if err != nil {
-			return "", err
-		}
-		req.TransactionDetails.GrossAmt = int64(parsedPrice)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
 	case "shuttle-post":
 		post, err := iu.r.ShuttlePostRepository.GetShuttlePost(model.ShuttlePostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		parsedPrice, err := strconv.Atoi(post.Price)
-		if err != nil {
-			return "", err
-		}
-		req.TransactionDetails.GrossAmt = int64(parsedPrice)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
 	}
 
 	paymentLink, midtransErr := snap.CreateTransactionUrl(req)
