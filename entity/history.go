@@ -15,6 +15,7 @@ type History struct {
 	Title          string    `json:"title"`
 	SellerUsername string    `json:"sellerUsername"`
 	Price          string    `json:"price"`
+	ImageLink      string    `json:"imageLink"`
 }
 
 type HistoryWithSeller struct {
