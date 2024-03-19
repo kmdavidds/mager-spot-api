@@ -32,12 +32,13 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/login", r.Login)
 	routerGroup.GET("/login-user", r.middleware.AuthenticateUser, getLoginUser)
 	routerGroup.POST("/auth-email", r.AuthenticateEmail)
-
+	
 	routerGroup.PATCH("/update-user", r.middleware.AuthenticateUser, r.UpdateUser)
 	routerGroup.PATCH("/update-photo", r.middleware.AuthenticateUser, r.UpdatePhoto)
 	routerGroup.GET("/history", r.middleware.AuthenticateUser, r.ShowHistory)
 	routerGroup.POST("/:category/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	routerGroup.GET("/:category/:id/contact", r.middleware.AuthenticateUser, r.GetContactLink)
+	routerGroup.GET("/search", r.middleware.AuthenticateUser, r.SearchAllPosts)
 
 	apartmentPost := routerGroup.Group("/apartment-post")
 	apartmentPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateApartmentPost)

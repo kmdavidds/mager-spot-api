@@ -333,3 +333,53 @@ func (r *Rest) AuthenticateEmail(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{})
 }
+
+func (r *Rest) SearchAllPosts(ctx *gin.Context) {
+	query := ctx.Query("query")
+	if query == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad query",
+		})
+		return
+	}
+
+	apartmentPosts, err := r.usecase.ApartmentPostUsecase.SearchApartmentPosts(model.ApartmentPostKey{Title: query})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get apartment posts",
+			"error":   err,
+		})
+		return
+	}
+	foodPosts, err := r.usecase.FoodPostUsecase.SearchFoodPosts(model.FoodPostKey{Title: query})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get food posts",
+			"error":   err,
+		})
+		return
+	}
+	productPosts, err := r.usecase.ProductPostUsecase.SearchProductPosts(model.ProductPostKey{Title: query})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get product posts",
+			"error":   err,
+		})
+		return
+	}
+	shuttlePosts, err := r.usecase.ShuttlePostUsecase.SearchShuttlePosts(model.ShuttlePostKey{Title: query})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to get shuttle posts",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"apatmentPosts": apartmentPosts,
+		"foodPosts":     foodPosts,
+		"productPosts":  productPosts,
+		"shuttlePosts":  shuttlePosts,
+	})
+}
