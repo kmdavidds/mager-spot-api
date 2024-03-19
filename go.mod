@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/joho/godotenv v1.5.1
+	github.com/midtrans/midtrans-go v1.3.7
 	gorm.io/gorm v1.25.7
 )
 

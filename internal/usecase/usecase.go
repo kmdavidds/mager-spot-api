@@ -14,6 +14,7 @@ type Usecase struct {
 	ProductPostUsecase   IProductPostUsecase
 	ShuttlePostUsecase   IShuttlePostUsecase
 	CommentUsecase       ICommentUsecase
+	InvoiceUsecase       IInvoiceUsecase
 }
 
 type InitParam struct {
@@ -30,6 +31,7 @@ func NewUsecase(param InitParam) *Usecase {
 	productPostUsecase := NewProductPostUsecase(param.Repository.ProductPostRepository, param.Supabase)
 	shuttlePostUsecase := NewShuttlePostUsecase(param.Repository.ShuttlePostRepository, param.Supabase)
 	commentUsecase := NewCommentUsecase(param.Repository.CommentRepository)
+	invoiceUsecase := NewInvoiceUsecase(param.Repository.InvoiceRepository, *param.Repository)
 
 	return &Usecase{
 		UserUsecase:          userUsecase,
@@ -38,5 +40,6 @@ func NewUsecase(param InitParam) *Usecase {
 		ProductPostUsecase:   productPostUsecase,
 		ShuttlePostUsecase:   shuttlePostUsecase,
 		CommentUsecase:       commentUsecase,
+		InvoiceUsecase:       invoiceUsecase,
 	}
 }

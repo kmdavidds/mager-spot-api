@@ -9,6 +9,7 @@ type Repository struct {
 	ProductPostRepository   IProductPostRepository
 	ShuttlePostRepository   IShuttlePostRepository
 	CommentRepository       ICommentRepository
+	InvoiceRepository       IInvoiceRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -18,6 +19,7 @@ func NewRepository(db *gorm.DB) *Repository {
 	productPostRepository := NewProductPostRepository(db)
 	shuttlePostRepository := NewShuttlePostRepository(db)
 	commentRepository := NewCommentRepository(db)
+	invoiceRepository := NewInvoiceRepository(db)
 
 	return &Repository{
 		UserRepository:          userRepository,
@@ -26,5 +28,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		ProductPostRepository:   productPostRepository,
 		ShuttlePostRepository:   shuttlePostRepository,
 		CommentRepository:       commentRepository,
+		InvoiceRepository:       invoiceRepository,
 	}
 }

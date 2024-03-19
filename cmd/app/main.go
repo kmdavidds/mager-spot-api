@@ -14,6 +14,7 @@ import (
 
 func init() {
 	config.LoadEnvVariables()
+	config.LoadMidtransConfig()
 }
 
 func main() {

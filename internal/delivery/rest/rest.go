@@ -39,6 +39,8 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/:category/:id/comment", r.middleware.AuthenticateUser, r.CreateComment)
 	routerGroup.GET("/:category/:id/contact", r.middleware.AuthenticateUser, r.GetContactLink)
 	routerGroup.GET("/search", r.middleware.AuthenticateUser, r.SearchAllPosts)
+	routerGroup.GET("/:category/:id/purchase", r.middleware.AuthenticateUser, r.Purchase)
+	routerGroup.POST("/verify-payment", r.Verify)
 
 	apartmentPost := routerGroup.Group("/apartment-post")
 	apartmentPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateApartmentPost)
