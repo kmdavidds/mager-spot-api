@@ -17,17 +17,3 @@ type History struct {
 	Price          string    `json:"price"`
 	ImageLink      string    `json:"imageLink"`
 }
-
-type HistoryWithSeller struct {
-	History        History `json:"history"`
-	Title          string  `json:"title"`
-	SellerUsername string  `json:"sellerUsername"`
-	Price          string  `json:"price"`
-}
-
-type HistoryAll struct {
-	HistoryBarang  []HistoryWithSeller
-	HistoryKos     []HistoryWithSeller
-	HistoryMakanan []HistoryWithSeller
-	HistoryOjek    []HistoryWithSeller
-}
