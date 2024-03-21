@@ -41,6 +41,11 @@ func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 		TransactionDetails: midtrans.TransactionDetails{
 			OrderID: invoice.ID.String(),
 		},
+		Items: &[]midtrans.ItemDetails{
+			{
+				ID: invoice.PostID.String(),
+			},
+		},
 	}
 
 	switch invoice.Category {
@@ -49,26 +54,58 @@ func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price) * convertToINT64(invoice.Amount)
+		(*req.Items)[0].Name = post.Title
+		(*req.Items)[0].Price = convertToINT64(post.Price)
+		(*req.Items)[0].Qty = int32(convertToINT64(invoice.Amount))
+		(*req.Items)[0].Category = invoice.Category
+		(*req.Items)[0].MerchantName = post.User.Username
+		invoice.SellerID = post.User.ID
 	case "food-post":
 		post, err := iu.r.FoodPostRepository.GetFoodPost(model.FoodPostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price) * convertToINT64(invoice.Amount)
+		(*req.Items)[0].Name = post.Title
+		(*req.Items)[0].Price = convertToINT64(post.Price)
+		(*req.Items)[0].Qty = int32(convertToINT64(invoice.Amount))
+		(*req.Items)[0].Category = invoice.Category
+		(*req.Items)[0].MerchantName = post.User.Username
+		invoice.SellerID = post.User.ID
 	case "product-post":
 		post, err := iu.r.ProductPostRepository.GetProductPost(model.ProductPostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price) * convertToINT64(invoice.Amount)
+		(*req.Items)[0].Name = post.Title
+		(*req.Items)[0].Price = convertToINT64(post.Price)
+		(*req.Items)[0].Qty = int32(convertToINT64(invoice.Amount))
+		(*req.Items)[0].Category = invoice.Category
+		(*req.Items)[0].MerchantName = post.User.Username
+		invoice.SellerID = post.User.ID
 	case "shuttle-post":
 		post, err := iu.r.ShuttlePostRepository.GetShuttlePost(model.ShuttlePostKey{ID: invoice.PostID})
 		if err != nil {
 			return "", err
 		}
-		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
+		req.TransactionDetails.GrossAmt = convertToINT64(post.Price) * convertToINT64(invoice.Amount)
+		(*req.Items)[0].Name = post.Title
+		(*req.Items)[0].Price = convertToINT64(post.Price)
+		(*req.Items)[0].Qty = int32(convertToINT64(invoice.Amount))
+		(*req.Items)[0].Category = invoice.Category
+		(*req.Items)[0].MerchantName = post.User.Username
+		invoice.SellerID = post.User.ID
 	}
+
+	pajak := midtrans.ItemDetails{
+		ID:    "pajak_pembeli",
+		Price: int64(float64(req.TransactionDetails.GrossAmt) * float64(0.05)),
+		Qty:   1,
+		Name:  "Pajak Sebesar 5%",
+	}
+	*req.Items = append(*req.Items, pajak)
 
 	req.TransactionDetails.GrossAmt = int64(float64(req.TransactionDetails.GrossAmt) * float64(1.05))
 
@@ -95,7 +132,7 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 	switch transactionStatus {
 	case mt.StatusCapture:
 		switch fraudStatus {
-		case mt.StatusChallenge: 
+		case mt.StatusChallenge:
 			iu.ir.UpdateInvoiceStatus("challenge", orderID.(string))
 		case mt.StatusAccept:
 			iu.ir.UpdateInvoiceStatus("success", orderID.(string))

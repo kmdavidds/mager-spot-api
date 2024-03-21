@@ -28,6 +28,7 @@ func (r *Rest) Purchase(ctx *gin.Context) {
 	}
 
 	category := ctx.Param("category")
+	amount := ctx.Query("amount")
 
 	invoice := entity.Invoice{
 		ID:       uuid.New(),
@@ -35,6 +36,7 @@ func (r *Rest) Purchase(ctx *gin.Context) {
 		PostID:   parsedId,
 		Category: category,
 		Status:   "pending",
+		Amount: amount,
 	}
 
 	paymentLink, err := r.usecase.InvoiceUsecase.Purchase(invoice)
