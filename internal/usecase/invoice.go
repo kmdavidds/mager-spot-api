@@ -7,6 +7,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/internal/repository"
 	"github.com/kmdavidds/mager-spot-api/model"
+	mt "github.com/kmdavidds/mager-spot-api/pkg/midtrans_extras"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
 )
@@ -89,26 +90,20 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 	fraudStatus := notificationPayload["fraud_status"]
 	orderID := notificationPayload["order_id"]
 
-	if transactionStatus == "capture" {
-		if fraudStatus == "challenge" {
-			// TODO set transaction status on your database to 'challenge'
+	switch transactionStatus {
+	case mt.StatusCapture:
+		switch fraudStatus {
+		case mt.StatusChallenge: 
 			iu.ir.UpdateInvoiceStatus("challenge", orderID.(string))
-			// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-		} else if fraudStatus == "accept" {
-			// TODO set transaction status on your database to 'success'
+		case mt.StatusAccept:
 			iu.ir.UpdateInvoiceStatus("success", orderID.(string))
 		}
-	} else if transactionStatus == "settlement" {
-		// TODO set transaction status on your databaase to 'success'
+	case mt.StatusSettlement:
 		iu.ir.UpdateInvoiceStatus("success", orderID.(string))
-	} else if transactionStatus == "deny" {
-		// TODO you can ignore 'deny', because most of the time it allows payment retries
-		// and later can become success
-	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
-		// TODO set transaction status on your databaase to 'failure'
+	case mt.StatusDeny:
+	case mt.StatusCancel, mt.StatusExpire:
 		iu.ir.UpdateInvoiceStatus("failure", orderID.(string))
-	} else if transactionStatus == "pending" {
-		// TODO set transaction status on your databaase to 'pending' / waiting payment
+	case mt.StatusPending:
 		iu.ir.UpdateInvoiceStatus("pending", orderID.(string))
 	}
 }
