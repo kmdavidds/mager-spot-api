@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/google/uuid"
@@ -171,6 +172,7 @@ func (uu *UserUsecase) CreateHistoryRecord(param model.SellerContact) error {
 
 func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error) {
 	var postTitle string
+	message := ""
 
 	switch param.Category {
 	case "product-post":
@@ -179,6 +181,7 @@ func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error)
 		postTitle = param.FoodPost.Title
 	case "apartment-post":
 		postTitle = param.ApartmentPost.Title
+		message += fmt.Sprintf("Tanggal Kedatangan Kos: %s", param.Date)
 	case "shuttle-post":
 		postTitle = param.ShuttlePost.Title
 	}
@@ -186,9 +189,9 @@ func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error)
 	param.User.DisplayName = strings.ReplaceAll(param.User.DisplayName, " ", "%20")
 	postTitle = strings.ReplaceAll(postTitle, " ", "%20")
 
-	message := fmt.Sprintf("Halo%%2C%%20nama%%20saya%%20%s.%%0ASaya%%20tertarik%%20dengan%%20postingan%%20anda%%20yang%%20berjudul%%20%s.%%0AApakah%%20masih%%20tersedia%%3F", param.User.DisplayName, postTitle)
+	message += fmt.Sprintf("Halo! nama saya %s.\nSaya tertarik dengan postingan anda yang berjudul %s.\nApakah masih tersedia?", param.User.DisplayName, postTitle)
 
-	contactLink := fmt.Sprintf("https://wa.me/%s?text=%s", param.Seller.PhoneNumber, message)
+	contactLink := fmt.Sprintf("https://wa.me/%s?text=%s", param.Seller.PhoneNumber, url.QueryEscape(message))
 
 	return contactLink, nil
 }

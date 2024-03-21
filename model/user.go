@@ -49,6 +49,7 @@ type SellerContact struct {
 	ProductPost   entity.ProductPost
 	ShuttlePost   entity.ShuttlePost
 	Category      string
+	Date          string
 }
 
 type EmailAuth struct {

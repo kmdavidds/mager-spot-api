@@ -227,6 +227,7 @@ func (r *Rest) GetContactLink(ctx *gin.Context) {
 			})
 			return
 		}
+		param.Date = ctx.Query("date")
 		param.ApartmentPost = apartmentPost
 		param.Seller = apartmentPost.User
 		param.Category = "apartment-post"
