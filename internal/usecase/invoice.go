@@ -7,7 +7,7 @@ import (
 	"github.com/kmdavidds/mager-spot-api/entity"
 	"github.com/kmdavidds/mager-spot-api/internal/repository"
 	"github.com/kmdavidds/mager-spot-api/model"
-	mt "github.com/kmdavidds/mager-spot-api/pkg/midtrans_extras"
+	"github.com/kmdavidds/mager-spot-api/pkg/mt"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
 )
@@ -69,6 +69,8 @@ func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 		}
 		req.TransactionDetails.GrossAmt = convertToINT64(post.Price)
 	}
+
+	req.TransactionDetails.GrossAmt = int64(float64(req.TransactionDetails.GrossAmt) * float64(1.05))
 
 	paymentLink, midtransErr := snap.CreateTransactionUrl(req)
 	if midtransErr != nil {

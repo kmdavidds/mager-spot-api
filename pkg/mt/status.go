@@ -1,4 +1,4 @@
-package midtrans_extras
+package mt
 
 const (
 	StatusCapture    = "capture"
