@@ -10,7 +10,7 @@ type IInvoiceRepository interface {
 	CreateInvoice(invoice entity.Invoice) error
 	UpdateInvoiceStatus(status string, id string) (*gorm.DB, error)
 	GetInvoice(param model.InvoiceParam) (entity.Invoice, error)
-	AddBalance(tx *gorm.DB, invoice entity.Invoice) error
+	AddBalance(tx *gorm.DB, invoice entity.Invoice) (*gorm.DB, error)
 }
 
 type InvoiceRepository struct {
@@ -51,10 +51,10 @@ func (ir *InvoiceRepository) GetInvoice(param model.InvoiceParam) (entity.Invoic
 
 	return invoice, nil
 }
-func (ir *InvoiceRepository) AddBalance(tx *gorm.DB, invoice entity.Invoice) error {
-	err := tx.Model(&entity.User{}).Where("id = ?", invoice.SellerID).Update("balance", gorm.Expr("balance + ?", invoice.OriginalPrice)).Error
-	if err != nil {
-		return err
+func (ir *InvoiceRepository) AddBalance(tx *gorm.DB, invoice entity.Invoice) (*gorm.DB, error) {
+	tx = tx.Model(&entity.User{}).Where("id = ?", invoice.SellerID).Update("balance", gorm.Expr("balance + ?", invoice.OriginalPrice))
+	if tx.Error != nil {
+		return tx, tx.Error
 	}
-	return nil
+	return tx, nil
 }

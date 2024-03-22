@@ -36,12 +36,6 @@ func convertToINT64(str string) int64 {
 	return int64(cleanInt)
 }
 
-func convertToOriginalPrice(str string) int64 {
-	clearFloat, _ := strconv.ParseFloat(str, 64)
-	clearFloat /= 1.05
-	return int64(clearFloat)
-}
-
 func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
@@ -158,7 +152,7 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 				tx.Rollback()
 				return
 			}
-			err = iu.ir.AddBalance(tx, invoice)
+			tx, err = iu.ir.AddBalance(tx, invoice)
 			if err != nil {
 				tx.Rollback()
 				return
@@ -176,7 +170,7 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 				tx.Rollback()
 				return
 			}
-			err = iu.ir.AddBalance(tx, invoice)
+			tx, err = iu.ir.AddBalance(tx, invoice)
 			if err != nil {
 				tx.Rollback()
 				return

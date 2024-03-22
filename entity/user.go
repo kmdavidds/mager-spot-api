@@ -18,6 +18,6 @@ type User struct {
 	IsSubscribed     bool      `json:"isSubscribed"`
 	SubscribedUntil  time.Time `json:"subscribedUntil"`
 	ProfilePhotoLink string    `json:"profilePhotoLink"`
-	Balance          int       `json:"balance"`
+	Balance          int64     `json:"balance" gorm:"default=-5000"`
 	Histories        []History `json:"-"`
 }
