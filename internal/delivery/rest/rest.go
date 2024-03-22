@@ -34,7 +34,8 @@ func (r *Rest) MountEndpoint() {
 	routerGroup.POST("/auth-email", r.AuthenticateEmail)
 	routerGroup.GET("/seller-invoice", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.GetSellerInvoices)
 	routerGroup.GET("/buyer-invoice", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.GetBuyerInvoices)
-	
+	routerGroup.POST("/email-payouts", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.SendPayoutsEmail)
+
 	routerGroup.PATCH("/update-user", r.middleware.AuthenticateUser, r.UpdateUser)
 	routerGroup.PATCH("/update-photo", r.middleware.AuthenticateUser, r.UpdatePhoto)
 	routerGroup.GET("/history", r.middleware.AuthenticateUser, r.ShowHistory)
@@ -49,19 +50,19 @@ func (r *Rest) MountEndpoint() {
 	apartmentPost.GET("", r.middleware.AuthenticateUser, r.GetApartmentPosts)
 	apartmentPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetApartmentPost)
 	apartmentPost.GET("/search", r.middleware.AuthenticateUser, r.SearchApartmentPosts)
-	
+
 	foodPost := routerGroup.Group("/food-post")
 	foodPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateFoodPost)
 	foodPost.GET("", r.middleware.AuthenticateUser, r.GetFoodPosts)
 	foodPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetFoodPost)
 	foodPost.GET("/search", r.middleware.AuthenticateUser, r.SearchFoodPosts)
-	
+
 	productPost := routerGroup.Group("/product-post")
 	productPost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateProductPost)
 	productPost.GET("", r.middleware.AuthenticateUser, r.GetProductPosts)
 	productPost.GET("/:id/", r.middleware.AuthenticateUser, r.GetProductPost)
 	productPost.GET("/search", r.middleware.AuthenticateUser, r.SearchProductPosts)
-	
+
 	shuttlePost := routerGroup.Group("/shuttle-post")
 	shuttlePost.POST("", r.middleware.AuthenticateUser, r.middleware.OnlySeller, r.CreateShuttlePost)
 	shuttlePost.GET("", r.middleware.AuthenticateUser, r.GetShuttlePosts)

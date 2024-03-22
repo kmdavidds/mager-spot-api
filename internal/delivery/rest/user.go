@@ -426,3 +426,24 @@ func (r *Rest) GetBuyerInvoices(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, invoice)
 }
+
+func (r *Rest) SendPayoutsEmail(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": "failed to get login user",
+		})
+		return
+	}
+
+	err := r.usecase.UserUsecase.SendPayoutsEmail(user.(entity.User))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to send email",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{})
+}

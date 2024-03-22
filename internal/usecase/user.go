@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"fmt"
+	"net/smtp"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
@@ -25,6 +27,7 @@ type IUserUsecase interface {
 	GetContactLink(param model.SellerContact) (string, error)
 	GetSellerInvoices(user entity.User) ([]entity.Invoice, error)
 	GetBuyerInvoices(user entity.User) ([]entity.Invoice, error)
+	SendPayoutsEmail(user entity.User) error
 }
 
 type UserUsecase struct {
@@ -204,4 +207,37 @@ func (uu *UserUsecase) GetSellerInvoices(user entity.User) ([]entity.Invoice, er
 
 func (uu *UserUsecase) GetBuyerInvoices(user entity.User) ([]entity.Invoice, error) {
 	return uu.ur.GetBuyerInvoices(user)
+}
+
+func (uu *UserUsecase) SendPayoutsEmail(user entity.User) error {
+	auth := smtp.PlainAuth(
+		"",
+		os.Getenv("COMPANY_EMAIL"),
+		os.Getenv("EMAILER_PASSWORD"),
+		"smtp.gmail.com",
+	)
+
+	emailBody := fmt.Sprintf("ID: %s\n"+
+		"Username: %s\n"+
+		"Email: %s\n"+
+		"Phone Number: %s\n"+
+		"Balance: %d\n", user.ID, user.Username, user.Email, user.PhoneNumber, user.Balance)
+
+	msg := fmt.Sprintf("To: magerspot@gmail.com\r\n"+
+		"Subject: Request Payout\r\n"+
+		"\r\n"+
+		"%s\r\n", emailBody)
+
+	err := smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		user.Email,
+		[]string{os.Getenv("COMPANY_EMAIL")},
+		[]byte(msg),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
