@@ -34,7 +34,7 @@ func (ir *InvoiceRepository) CreateInvoice(invoice entity.Invoice) error {
 
 func (ir *InvoiceRepository) UpdateInvoiceStatus(status string, id string) (*gorm.DB, error) {
 	tx := ir.db.Begin()
-	tx = tx.Model(&entity.Invoice{}).Where("id = ?", id).Update("status", status)
+	tx.Model(&entity.Invoice{}).Where("id = ?", id).Update("status", status)
 	if tx.Error != nil {
 		return tx, tx.Error
 	}
@@ -52,7 +52,8 @@ func (ir *InvoiceRepository) GetInvoice(param model.InvoiceParam) (entity.Invoic
 	return invoice, nil
 }
 func (ir *InvoiceRepository) AddBalance(tx *gorm.DB, invoice entity.Invoice) (*gorm.DB, error) {
-	tx = tx.Model(&entity.User{}).Where("id = ?", invoice.SellerID).Update("balance", gorm.Expr("balance + ?", invoice.OriginalPrice))
+	var user entity.User
+	tx.Model(&user).Where("id = ?", invoice.SellerID).Update("balance", gorm.Expr("balance + ?", invoice.OriginalPrice))
 	if tx.Error != nil {
 		return tx, tx.Error
 	}

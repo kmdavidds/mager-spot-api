@@ -145,17 +145,17 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 			tx, err := iu.ir.UpdateInvoiceStatus("success", orderID.(string))
 			if err != nil {
 				tx.Rollback()
-				return
+				return 
 			}
 			invoice, err := iu.ir.GetInvoice(model.InvoiceParam{ID: orderID.(string)})
 			if err != nil {
 				tx.Rollback()
-				return
+				return 
 			}
 			tx, err = iu.ir.AddBalance(tx, invoice)
 			if err != nil {
 				tx.Rollback()
-				return
+				return 
 			}
 			tx.Commit()
 		}
@@ -168,12 +168,12 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 			invoice, err := iu.ir.GetInvoice(model.InvoiceParam{ID: orderID.(string)})
 			if err != nil {
 				tx.Rollback()
-				return
+				return 
 			}
 			tx, err = iu.ir.AddBalance(tx, invoice)
 			if err != nil {
 				tx.Rollback()
-				return
+				return 
 			}
 			tx.Commit()
 	case mt.StatusDeny:
@@ -188,7 +188,7 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 		tx, err := iu.ir.UpdateInvoiceStatus("pending", orderID.(string))
 		if err != nil {
 			tx.Rollback()
-			return
+			return 
 		}
 		tx.Commit()
 	}
