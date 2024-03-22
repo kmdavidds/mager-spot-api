@@ -18,5 +18,6 @@ type User struct {
 	IsSubscribed     bool      `json:"isSubscribed"`
 	SubscribedUntil  time.Time `json:"subscribedUntil"`
 	ProfilePhotoLink string    `json:"profilePhotoLink"`
+	Balance          int       `json:"balance"`
 	Histories        []History `json:"-"`
 }

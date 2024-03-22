@@ -36,6 +36,12 @@ func convertToINT64(str string) int64 {
 	return int64(cleanInt)
 }
 
+func convertToOriginalPrice(str string) int64 {
+	clearFloat, _ := strconv.ParseFloat(str, 64)
+	clearFloat /= 1.05
+	return int64(clearFloat)
+}
+
 func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
@@ -107,6 +113,8 @@ func (iu *InvoiceUsecase) Purchase(invoice entity.Invoice) (string, error) {
 	}
 	*req.Items = append(*req.Items, pajak)
 
+	invoice.OriginalPrice = req.TransactionDetails.GrossAmt
+
 	req.TransactionDetails.GrossAmt = int64(float64(req.TransactionDetails.GrossAmt) * float64(1.05))
 
 	paymentLink, midtransErr := snap.CreateTransactionUrl(req)
@@ -133,16 +141,61 @@ func (iu *InvoiceUsecase) Verify(notificationPayload map[string]interface{}) {
 	case mt.StatusCapture:
 		switch fraudStatus {
 		case mt.StatusChallenge:
-			iu.ir.UpdateInvoiceStatus("challenge", orderID.(string))
+			tx, err := iu.ir.UpdateInvoiceStatus("challenge", orderID.(string))
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			tx.Commit()
 		case mt.StatusAccept:
-			iu.ir.UpdateInvoiceStatus("success", orderID.(string))
+			tx, err := iu.ir.UpdateInvoiceStatus("success", orderID.(string))
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			invoice, err := iu.ir.GetInvoice(model.InvoiceParam{ID: orderID.(string)})
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			err = iu.ir.AddBalance(tx, invoice)
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			tx.Commit()
 		}
 	case mt.StatusSettlement:
-		iu.ir.UpdateInvoiceStatus("success", orderID.(string))
+		tx, err := iu.ir.UpdateInvoiceStatus("success", orderID.(string))
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			invoice, err := iu.ir.GetInvoice(model.InvoiceParam{ID: orderID.(string)})
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			err = iu.ir.AddBalance(tx, invoice)
+			if err != nil {
+				tx.Rollback()
+				return
+			}
+			tx.Commit()
 	case mt.StatusDeny:
 	case mt.StatusCancel, mt.StatusExpire:
-		iu.ir.UpdateInvoiceStatus("failure", orderID.(string))
+		tx, err := iu.ir.UpdateInvoiceStatus("failure", orderID.(string))
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		tx.Commit()
 	case mt.StatusPending:
-		iu.ir.UpdateInvoiceStatus("pending", orderID.(string))
+		tx, err := iu.ir.UpdateInvoiceStatus("pending", orderID.(string))
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		tx.Commit()
 	}
 }
