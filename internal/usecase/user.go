@@ -23,6 +23,8 @@ type IUserUsecase interface {
 	ShowHistory(user entity.User) ([]entity.History, error)
 	CreateHistoryRecord(param model.SellerContact) error
 	GetContactLink(param model.SellerContact) (string, error)
+	GetSellerInvoices(user entity.User) ([]entity.Invoice, error)
+	GetBuyerInvoices(user entity.User) ([]entity.Invoice, error)
 }
 
 type UserUsecase struct {
@@ -194,4 +196,12 @@ func (uu *UserUsecase) GetContactLink(param model.SellerContact) (string, error)
 	contactLink := fmt.Sprintf("https://wa.me/%s?text=%s", param.Seller.PhoneNumber, url.QueryEscape(message))
 
 	return contactLink, nil
+}
+
+func (uu *UserUsecase) GetSellerInvoices(user entity.User) ([]entity.Invoice, error) {
+	return uu.ur.GetSellerInvoices(user)
+}
+
+func (uu *UserUsecase) GetBuyerInvoices(user entity.User) ([]entity.Invoice, error) {
+	return uu.ur.GetBuyerInvoices(user)
 }

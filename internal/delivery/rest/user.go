@@ -384,3 +384,45 @@ func (r *Rest) SearchAllPosts(ctx *gin.Context) {
 		"shuttlePosts":  shuttlePosts,
 	})
 }
+
+func (r *Rest) GetSellerInvoices(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": "failed to get login user",
+		})
+		return
+	}
+
+	invoice, err := r.usecase.UserUsecase.GetSellerInvoices(user.(entity.User))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to fetch invoices",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, invoice)
+}
+
+func (r *Rest) GetBuyerInvoices(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": "failed to get login user",
+		})
+		return
+	}
+
+	invoice, err := r.usecase.UserUsecase.GetBuyerInvoices(user.(entity.User))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to fetch invoices",
+			"error":   err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, invoice)
+}

@@ -13,6 +13,8 @@ type IUserRepository interface {
 	UpdatePhoto(param model.PhotoUpdate) error
 	ShowHistory(user entity.User) ([]entity.History, error)
 	CreateHistoryRecord(history entity.History) error
+	GetSellerInvoices(user entity.User) ([]entity.Invoice, error)
+	GetBuyerInvoices(user entity.User) ([]entity.Invoice, error)
 }
 
 type UserRepository struct {
@@ -78,4 +80,24 @@ func (ur *UserRepository) CreateHistoryRecord(history entity.History) error {
 	}
 
 	return nil
+}
+
+func (ur *UserRepository) GetSellerInvoices(user entity.User) ([]entity.Invoice, error) {
+	invoices := []entity.Invoice{}
+	err := ur.db.Where("seller_id = ?", user.ID).Find(&invoices).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return invoices, nil
+}
+
+func (ur *UserRepository) GetBuyerInvoices(user entity.User) ([]entity.Invoice, error) {
+	invoices := []entity.Invoice{}
+	err := ur.db.Where("user_id = ?", user.ID).Find(&invoices).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return invoices, nil
 }
